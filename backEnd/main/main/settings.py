@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'Notifications',
     'Staff',
     'StockTransfer',
-    'User',
+    'UserAuth',
     'BloodRequest',
     'BloodInventory',
     'Donor',
