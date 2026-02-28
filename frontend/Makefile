@@ -19,3 +19,7 @@ fix:
 	ruff check --fix .
 	@echo "Running ESLint auto-fix..."
 	npm run lint -- --fix
+
+i:
+	@echo "install react"
+	npm install
