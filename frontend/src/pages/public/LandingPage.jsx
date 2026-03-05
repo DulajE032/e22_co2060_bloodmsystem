@@ -12,7 +12,7 @@ const LandingPage = () => {
     // Intersection Observer for scroll animations
     useEffect(() => {
         const observerOptions = {
-            threshold: 0.1,
+            threshold: 0.1,     
             rootMargin: "0px 0px -50px 0px"
         };
         const observer = new IntersectionObserver((entries) => {
@@ -256,6 +256,7 @@ const LandingPage = () => {
                         <Link to="/donor">Donor Portal</Link>
                         <Link to="/patient">Request Blood</Link>
                         <Link to="/login">Hospital Login</Link>
+                        <Link to="/contact">Contact Us</Link>
                     </div>
                     <div className="footer-contact">
                         <h4>Emergency Contact</h4>
