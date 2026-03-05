@@ -7,6 +7,7 @@ import LandingPage from './pages/public/LandingPage';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
 import DonorDashboard from './pages/donor/DonorDashboard';
+import DonorEligibility from './pages/donor/DonorEligibility';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import LabDashboard from './pages/staff/LabDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -34,6 +35,7 @@ function App() {
 
               {/* Protected Routes */}
               <Route path="/donor" element={<PrivateRoute><DonorDashboard /></PrivateRoute>} />
+              <Route path="/donor/eligibility" element={<PrivateRoute><DonorEligibility /></PrivateRoute>} />
               <Route path="/doctor" element={<PrivateRoute><DoctorDashboard /></PrivateRoute>} />
               {/* Renamed lab to staff path logically */}
               <Route path="/staff" element={<PrivateRoute><LabDashboard /></PrivateRoute>} />
