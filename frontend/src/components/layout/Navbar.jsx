@@ -84,6 +84,9 @@ const Navbar = () => {
                         <Mail size={16} />
                         <span>Contact</span>
                     </Link>
+                    <Link to="/about-us" className={navLinkClass('/about-us')}>
+                        <span>About Us</span>
+                    </Link>
                 </div>
 
                 {/* ACTIONS (right side) */}
@@ -156,6 +159,9 @@ const Navbar = () => {
                     </Link>
                     <Link to="/contact" className={mobileLinkClass('/contact')} onClick={closeMenu}>
                         <Mail size={24} /> Contact
+                    </Link>
+                    <Link to="/about-us" className={mobileLinkClass('/about-us')} onClick={closeMenu}>
+                        <span>About Us</span>
                     </Link>
 
                     {/* Mobile auth action */}
