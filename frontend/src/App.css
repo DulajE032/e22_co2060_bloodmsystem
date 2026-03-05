@@ -7,6 +7,7 @@
 .main-content {
   flex: 1;
   padding: var(--spacing-6);
+  padding-top: 100px;          /* Space for the fixed floating navbar */
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -49,6 +50,7 @@
 @media (max-width: 768px) {
   .main-content {
     padding: var(--spacing-4);
+    padding-top: 80px;          /* Less space needed on mobile */
   }
 
   .dashboard-grid {

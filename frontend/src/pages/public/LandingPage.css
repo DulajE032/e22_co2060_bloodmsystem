@@ -71,19 +71,18 @@
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
-    flex-direction: column; /* Stacks text and button vertically */
+    flex-direction: column;
     justify-content: center;
+    align-items: center;        /* Center children horizontally */
     min-height: 60vh;
     position: relative;
     z-index: 2;
 }
 
 .hero-content {
-    /* Keeps the text block on the left side */
-    align-self: flex-start; 
-    text-align: left;
-    max-width: 600px;
-    margin-bottom: 3rem; /* Creates space so the button sits below */
+    text-align: center;         /* Center all text */
+    max-width: 700px;
+    margin-bottom: 3rem;
 }
 
 /* 3. The 6-Image Animation Logic */
