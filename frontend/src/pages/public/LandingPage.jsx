@@ -96,7 +96,7 @@ const LandingPage = () => {
                                         <p>Not sure if you can donate blood today? Take our quick, automated health questionnaire to instantly verify your eligibility.</p>
                                     </div>
                                     <div className="service-read-more">
-                                        <Link to="/donor">Take the Quiz</Link>
+                                        <Link to="/donor/eligibility">Take the Quiz</Link>
                                     </div>
                                 </div>
                             </div>
