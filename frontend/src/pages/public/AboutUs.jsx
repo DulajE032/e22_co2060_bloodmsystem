@@ -1,256 +1,299 @@
+import { useEffect } from 'react';
+import { Link } from 'react-router';
+import {
+  Target, Eye, Users, Droplet,
+  Shield, Clock, Award, Moon, Sun,
+} from 'lucide-react';
+import workingTogetherImg from '../../assets/photo6.png';
+import { useTheme } from '../../context/ThemeContext';
 import './AboutUs.css';
 
-export default function AboutUs() {
-  const teamMembers = [
-    {
-      name: "Dr. Michael Chen",
-      role: "Chief Medical Officer",
-      image: "https://images.unsplash.com/photo-1632054224659-280be3239aff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBtYWxlfGVufDF8fHx8MTc3MjcyNDI1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-      description: "15+ years in hematology and blood bank management"
-    },
-    {
-      name: "Sarah Johnson",
-      role: "Director of Operations",
-      image: "https://images.unsplash.com/photo-1638202993928-7267aad84c31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBudXJzZSUyMGZlbWFsZXxlbnwxfHx8fDE3NzI3MjQyNTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      description: "Specializing in healthcare logistics and supply chain"
-    },
-    {
-      name: "Dr. Raj Patel",
-      role: "Head of Quality Assurance",
-      image: "https://images.unsplash.com/photo-1632054226038-ed6997bfce1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBhc2lhbiUyMGRvY3RvcnxlbnwxfHx8fDE3NzI3MjQyNTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      description: "Expert in blood safety protocols and regulatory compliance"
-    },
-    {
-      name: "Dr. Amara Williams",
-      role: "Research & Development Lead",
-      image: "https://images.unsplash.com/photo-1632054229795-4097870879b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBhZnJpY2FuJTIwZG9jdG9yfGVufDF8fHx8MTc3MjcyNDI1M3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      description: "Pioneering innovative blood storage and testing methods"
-    }
-  ];
+/* ─── Static Data ─────────────────────────────────────────────────────────── */
 
-  const stats = [
-    { value: "50K+", label: "Lives Saved", icon: "👥" },
-    { value: "1M+", label: "Units Processed", icon: "📊" },
-    { value: "24/7", label: "Availability", icon: "🕐" },
-    { value: "15+", label: "Years Experience", icon: "🏆" }
-  ];
+const TEAM_MEMBERS = [
+  {
+    id: 1,
+    name: 'Dr. Sarah Mitchell',
+    role: 'Chief Medical Officer',
+    image:
+      'https://images.unsplash.com/photo-1652549210870-bf3a6955f9d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmZW1hbGUlMjBtZWRpY2FsJTIwcHJvZmVzc2lvbmFsJTIwaGVhZHNob3R8ZW58MXx8fHwxNzcyNjU1NTYwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+  },
+  {
+    id: 2,
+    name: 'Dr. James Anderson',
+    role: 'Director of Operations',
+    image:
+      'https://images.unsplash.com/photo-1755189118414-14c8dacdb082?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBkb2N0b3IlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzI3MjQxMTR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+  },
+  {
+    id: 3,
+    name: 'Michael Chen',
+    role: 'Blood Bank Manager',
+    image:
+      'https://images.unsplash.com/photo-1758691463605-f4a3a92d6d37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWxlJTIwaGVhbHRoY2FyZSUyMHdvcmtlciUyMHBvcnRyYWl0fGVufDF8fHx8MTc3Mjc0MjAyM3ww&ixlib=rb-4.1.0&q=80&w=1080',
+  },
+  {
+    id: 4,
+    name: 'Emily Rodriguez',
+    role: 'Head Nurse & Coordinator',
+    image:
+      'https://images.unsplash.com/photo-1676552055618-22ec8cde399a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxudXJzZSUyMHByb2Zlc3Npb25hbCUyMGhlYWRzaG90fGVufDF8fHx8MTc3Mjc0MjAyM3ww&ixlib=rb-4.1.0&q=80&w=1080',
+  },
+];
 
-  const values = [
-    {
-      icon: "🛡️",
-      title: "Safety First",
-      description: "Rigorous testing and quality control ensure the highest safety standards"
-    },
-    {
-      icon: "❤️",
-      title: "Compassionate Care",
-      description: "Every donation and transfusion is handled with dignity and respect"
-    },
-    {
-      icon: "⚡",
-      title: "Swift Response",
-      description: "Round-the-clock operations to meet critical blood supply demands"
-    },
-    {
-      icon: "👥",
-      title: "Community Focus",
-      description: "Building strong partnerships with donors, hospitals, and healthcare providers"
-    }
-  ];
+const CORE_VALUES = [
+  {
+    id: 'compassion',
+    Icon: Droplet,
+    title: 'Compassion',
+    description:
+      'Every drop counts. We treat each donation and patient with utmost care and respect.',
+  },
+  {
+    id: 'safety',
+    Icon: Shield,
+    title: 'Safety First',
+    description:
+      'Rigorous testing and quality control ensure the highest safety standards for all blood products.',
+  },
+  {
+    id: 'availability',
+    Icon: Clock,
+    title: '24/7 Availability',
+    description:
+      "Round-the-clock operations to ensure blood is available whenever and wherever it's needed.",
+  },
+  {
+    id: 'excellence',
+    Icon: Award,
+    title: 'Excellence',
+    description:
+      'Committed to maintaining the highest standards in blood banking and healthcare services.',
+  },
+];
+
+/* ─── Component ───────────────────────────────────────────────────────────── */
+
+export function AboutUs() {
+  // ── ONLY CHANGE: read theme from ThemeContext instead of local useState ──
+  // The Navbar calls the same toggleTheme(), so both stay in sync automatically.
+  const { theme, toggleTheme } = useTheme();
+  const dark = theme === 'dark';
+  const t = dark ? 'dark' : 'light'; // theme shorthand for className suffixes
+
+  // Scroll animations logic exactly like ContactPage
+  useEffect(() => {
+    const observerOptions = { 
+      threshold: 0.1, 
+      rootMargin: '0px 0px -50px 0px' 
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // This selects all elements with the animation class
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="about-us-container">
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-background">
-          <img
-            src="https://images.unsplash.com/photo-1697192156499-d85cfe1452c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9vZCUyMGRvbmF0aW9uJTIwbWVkaWNhbHxlbnwxfHx8fDE3NzI2NDUzMzV8MA&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="Blood donation background"
-            className="hero-bg-image"
-          />
-          <div className="hero-overlay"></div>
-        </div>
-        
-        <div className="hero-content">
-          <span className="hero-badge">About Us</span>
-          <h1 className="hero-title">
-            Bridging Hearts,
-            <span className="hero-subtitle">Saving Lives</span>
+    <div className={`au-page ${t}`}>
+
+      {/* ══════════════ THEME TOGGLE ══════════════ */}
+      <button className={`au-toggle ${t}`} onClick={toggleTheme}>
+        {dark ? (
+          <>
+            <Sun className="au-toggle__icon sun" />
+            <span>Light Mode</span>
+          </>
+        ) : (
+          <>
+            <Moon className="au-toggle__icon moon" />
+            <span>Night Mode</span>
+          </>
+        )}
+      </button>
+
+      {/* ══════════════ HERO ══════════════ */}
+      <section className="au-hero animate-on-scroll">
+        <div className="au-hero__inner">
+          {/* "Behind the Drop" badge */}
+          <div className="au-hero__badge">
+            <Droplet size={20} />
+            <span>Behind the Drop</span>
+          </div>
+
+          <h1 className="au-hero__title">
+            Saving Lives Through Every Drop of Blood
           </h1>
-          <p className="hero-description">
-            Dedicated to ensuring that every drop of blood reaches those who need it most, 
-            when they need it most. Together, we create a lifeline for our community.
+
+          <p className="au-hero__subtitle">
+            For over two decades, we've been at the forefront of blood bank
+            management, connecting generous donors with patients in need and
+            ensuring safe, timely access to life-saving blood products.
           </p>
         </div>
-        
-        <div className="hero-wave">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
-          </svg>
-        </div>
       </section>
 
-      {/* Vision & Mission Section */}
-      <section className="vision-mission-section">
-        <div className="container">
-          <div className="vision-mission-grid">
-            {/* Vision Box */}
-            <div className="vision-box card">
-              <div className="card-header">
-                <div className="icon-circle">
-                  <span className="icon">👁️</span>
-                </div>
-                <h2>Our Vision</h2>
-              </div>
-              <p className="card-text">
-                To create a world where no life is lost due to blood shortage. We envision a future 
-                with advanced blood bank management systems that seamlessly connect donors with recipients, 
-                utilizing cutting-edge technology to maintain optimal inventory levels and ensure rapid 
-                emergency response capabilities across all communities.
-              </p>
-            </div>
+      {/* ══════════════ VISION & MISSION ══════════════ */}
+      <div className="au-vm-section animate-on-scroll">
+        <div className="au-vm-grid">
 
-            {/* Mission Box */}
-            <div className="mission-box card">
-              <div className="card-header">
-                <div className="icon-circle">
-                  <span className="icon">🎯</span>
-                </div>
-                <h2>Our Mission</h2>
-              </div>
-              <p className="card-text">
-                To provide safe, reliable, and efficient blood banking services through innovative 
-                technology and compassionate care. We are committed to maintaining the highest 
-                standards of quality, building strong community partnerships, and ensuring that 
-                life-saving blood is available whenever and wherever it's needed.
-              </p>
+          {/* Vision Card */}
+          <div className={`au-vm-card ${t}`}>
+            <div className="au-vm-card__icon-wrap">
+              <Eye size={32} color="#fff" />
             </div>
+            <h2 className={`au-vm-card__title ${t}`}>Our Vision</h2>
+            <p className={`au-vm-card__text ${t}`}>
+              To create a world where no life is lost due to blood shortage. We
+              envision a comprehensive, efficient, and accessible blood banking
+              system that serves every community with dignity, reliability, and
+              compassion, ensuring that safe blood is available to all who need
+              it, when they need it.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* Statistics Section */}
-      <section className="statistics-section">
-        <div className="container">
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-item">
-                <div className="stat-icon-circle">
-                  <span className="stat-icon">{stat.icon}</span>
+          {/* Mission Card */}
+          <div className={`au-vm-card ${t}`}>
+            <div className="au-vm-card__icon-wrap">
+              <Target size={32} color="#fff" />
+            </div>
+            <h2 className={`au-vm-card__title ${t}`}>Our Mission</h2>
+            <p className={`au-vm-card__text ${t}`}>
+              To provide safe, high-quality blood and blood products through
+              innovative management systems, dedicated healthcare professionals,
+              and strong community partnerships. We are committed to maintaining
+              the highest standards of safety, efficiency, and service excellence
+              in all our operations.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ══════════════ CORE VALUES ══════════════ */}
+      <section className={`au-values animate-on-scroll${t}`}>
+        <div className="au-values__inner">
+          <div className="au-section-header">
+            <h2 className={`au-section-title ${t}`}>Our Core Values</h2>
+            <p className={`au-section-sub ${t}`}>
+              The principles that guide everything we do
+            </p>
+          </div>
+
+          <div className="au-values__grid">
+            {CORE_VALUES.map(({ id, Icon, title, description }) => (
+              <div key={id} className={`au-value-card ${t}`}>
+                <div className={`au-value-card__icon ${t}`}>
+                  <Icon size={32} />
                 </div>
-                <div className="stat-value">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
+                <h3 className={`au-value-card__title ${t}`}>{title}</h3>
+                <p className={`au-value-card__desc ${t}`}>{description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Core Values Section */}
-      <section className="core-values-section">
-        <div className="container">
-          <div className="section-header">
-            <h2>Our Core Values</h2>
-            <p>The principles that guide everything we do</p>
+      {/* ══════════════ MEET OUR TEAM ══════════════ */}
+      <div className="au-team-section animate-on-scroll">
+        <div className="au-section-header">
+          <div className={`au-team-section__icon ${t}`}>
+            <Users size={32} />
           </div>
-          <div className="values-grid">
-            {values.map((value, index) => (
-              <div key={index} className="value-card card">
-                <div className="value-icon-circle">
-                  <span className="value-icon">{value.icon}</span>
-                </div>
-                <h3>{value.title}</h3>
-                <p>{value.description}</p>
-              </div>
-            ))}
-          </div>
+          <h2 className={`au-section-title ${t}`}>Meet Our Team</h2>
+          <p className={`au-section-sub ${t}`}>
+            Dedicated professionals committed to excellence in blood banking and
+            patient care
+          </p>
         </div>
-      </section>
 
-      {/* Team Section */}
-      <section className="team-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="section-badge">Our Team</span>
-            <h2>Meet Our Team</h2>
-            <p>Dedicated professionals committed to excellence in blood bank management</p>
-          </div>
-          <div className="team-grid">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="team-card card">
-                <div className="team-image-wrapper">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="team-image"
-                  />
-                  <div className="team-overlay"></div>
-                </div>
-                <div className="team-info">
-                  <h3>{member.name}</h3>
-                  <p className="team-role">{member.role}</p>
-                  <p className="team-description">{member.description}</p>
-                </div>
+        <div className="au-team__grid">
+          {TEAM_MEMBERS.map((member) => (
+            <div key={member.id} className={`au-team-card ${t}`}>
+              <div className="au-team-card__img-wrap">
+                <img src={member.image} alt={member.name} />
+                <div className="au-team-card__overlay" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Collaboration Section */}
-      <section className="collaboration-section">
-        <div className="container-small">
-          <div className="collaboration-card card">
-            <div className="collaboration-content">
-              <h2>Working Together</h2>
-              <p>
-                Our multidisciplinary team collaborates seamlessly to ensure that every aspect of 
-                blood bank management meets the highest standards of excellence.
-              </p>
-              <p>
-                From collection to distribution, we work hand-in-hand to save lives every single day.
-              </p>
-              <div className="collaboration-badges">
-                <span className="collab-badge">Excellence</span>
-                <span className="collab-badge">Innovation</span>
-                <span className="collab-badge">Teamwork</span>
+              <div className="au-team-card__info">
+                <h3 className={`au-team-card__name ${t}`}>{member.name}</h3>
+                <p className="au-team-card__role">{member.role}</p>
               </div>
             </div>
-            <div className="collaboration-image-wrapper">
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════════ WORKING TOGETHER ══════════════ */}
+      <section className={`au-working ${t}`}>
+        <div className="au-working__inner">
+          <div className={`au-working__card ${t}`}>
+
+            {/* Text side */}
+            <div className="au-working__text">
+              <h2 className={`au-working__title ${t}`}>Working Together</h2>
+              <p className={`au-working__para ${t}`}>
+                Our{' '}
+                <span className="au-working__highlight">
+                  multidisciplinary team
+                </span>{' '}
+                collaborates seamlessly to ensure that every aspect of blood
+                bank management meets the highest standards of excellence.
+              </p>
+              <p className={`au-working__para ${t}`}>
+                From collection to distribution, we work hand-in-hand to save
+                lives every single day.
+              </p>
+              <div className="au-working__tags">
+                {['Excellence', 'Innovation', 'Teamwork'].map((tag) => (
+                  <span key={tag} className="au-working__tag">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Image side */}
+            <div className="au-working__img-wrap">
               <img
-                src="https://images.unsplash.com/photo-1770221797869-81e508282ac4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwdGVhbSUyMGNvbGxhYm9yYXRpb258ZW58MXx8fHwxNzcyNjczNzQ1fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Medical team collaboration"
-                className="collaboration-image"
+                src={workingTogetherImg}
+                alt="Healthcare professionals working together"
               />
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-content">
-            <div className="cta-heart">❤️</div>
-            <h2>Join Us in Saving Lives</h2>
-            <p>
-              Whether you're a donor, healthcare provider, or community partner, 
-              there's a place for you in our mission to ensure no life is lost due to blood shortage.
-            </p>
-            <div className="cta-buttons">
-              <button className="cta-btn primary">Become a Donor</button>
-              <button className="cta-btn secondary">Partner With Us</button>
-            </div>
+      {/* ══════════════ FOOTER / CTA ══════════════ */}
+      <footer className="au-footer">
+        <div className="au-footer__inner">
+          <h2 className="au-footer__title">Join Us in Saving Lives</h2>
+          <p className="au-footer__subtitle">
+            Whether you're a donor, healthcare provider, or organization, there
+            are many ways to support our mission and make a difference in your
+            community.
+          </p>
+          <div className="au-footer__buttons">
+            <Link to="/donor-dashboard" className="au-cta-btn">
+              Become a Donor
+            </Link>
+            <Link to="/contact" className="au-cta-btn">
+              Contact Us
+            </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <p>© 2026 Blood Bank Management System. All rights reserved. | Saving lives, one donation at a time.</p>
         </div>
       </footer>
+
     </div>
   );
 }
+export default AboutUs;
