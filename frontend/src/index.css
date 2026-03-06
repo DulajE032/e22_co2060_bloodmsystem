@@ -98,6 +98,17 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5);
+
+  /* Global Button Overrides for Dark Mode */
+  .btn-primary,
+  .btn-outline,
+  .btn-block,
+  .btn-blood-type,
+  .btn-danger-pulse {
+    background-color: #1a1a2e !important;
+    color: #e6edf3 !important;
+    border: 1px solid #30363d !important;
+  }
 }
 
 * {
@@ -205,7 +216,7 @@ body.disaster-mode {
   background: rgba(255, 255, 255, 0.97) !important;
   border: 1px solid rgba(198, 40, 40, 0.12) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-              0 2px 8px rgba(198, 40, 40, 0.08) !important;
+    0 2px 8px rgba(198, 40, 40, 0.08) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
 }
@@ -215,7 +226,7 @@ body.disaster-mode {
   background: rgba(22, 27, 34, 0.95) !important;
   border: 1px solid rgba(198, 40, 40, 0.28) !important;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6),
-              0 0 20px rgba(198, 40, 40, 0.12) !important;
+    0 0 20px rgba(198, 40, 40, 0.12) !important;
   color: #e6edf3 !important;
 }
 
@@ -288,6 +299,7 @@ body.disaster-mode {
 
 /* ── Responsive positioning nudge on small screens ── */
 @media (max-width: 480px) {
+
   .swal2-container.swal2-top-end,
   .swal2-container.swal2-top-right {
     top: 0.5rem !important;
