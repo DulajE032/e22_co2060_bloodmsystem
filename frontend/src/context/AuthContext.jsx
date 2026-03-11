@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';          // ✅ Added: needed for API calls
+import { jwtDecode } from 'jwt-decode';  // ✅ Added: needed to decode JWT tokens
 import Swal from 'sweetalert2';
 
 const AuthContext = createContext();
@@ -6,22 +8,35 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); //initialize state
     const [user, setUser] = useState(null);
+    const [authTokens, setAuthTokens] = useState(null);  // ✅ Added: state for tokens
     const [loading, setLoading] = useState(true);
 
+    // ✅ Fixed: Check localStorage for REAL tokens on page load
     useEffect(() => {
-        // Check local storage for dummy auth state on load
-        const token = localStorage.getItem('hopedrop_token');
-        if (token) {
+        const storedTokens = localStorage.getItem('authTokens');
+        if (storedTokens) {
+            const tokens = JSON.parse(storedTokens);
+            setAuthTokens(tokens);
+            setUser(jwtDecode(tokens.access));
             setIsAuthenticated(true);
-            setUser(JSON.parse(localStorage.getItem('hopedrop_user')));
         }
         setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        setIsAuthenticated(true);
+    // ✅ Fixed: login receives email & password, calls Django API
+    const login = async (email, password) => {
+        const response = await axios.post("http://localhost:5000/api/token", {
+            email,
+            username,
+            password,
+        });
+
+        const tokens = response.data;               // { access: "eyJ...", refresh: "eyJ..." }
+        const userData = jwtDecode(tokens.access);   // decode to get user info
+
+        setAuthTokens(tokens);
         setUser(userData);
         localStorage.setItem('hopedrop_token', 'dummy-token');
         localStorage.setItem('hopedrop_user', JSON.stringify(userData));
@@ -40,8 +55,8 @@ export const AuthProvider = ({ children }) => {
             if (result.isConfirmed) {
                 setIsAuthenticated(false);
                 setUser(null);
-                localStorage.removeItem('hopedrop_token');
-                localStorage.removeItem('hopedrop_user');
+                setAuthTokens(null);
+                localStorage.removeItem('authTokens');  // ✅ Fixed: correct key
 
                 Swal.fire({
                     title: 'Logged Out!',
@@ -57,6 +72,9 @@ export const AuthProvider = ({ children }) => {
     const value = {
         isAuthenticated,
         user,
+        authTokens,      // ✅ Added: expose tokens for useAxios hook
+        setAuthTokens,   // ✅ Added: expose setter for useAxios hook
+        setUser,         // ✅ Added: expose setter for useAxios hook
         login,
         logout,
         loading
