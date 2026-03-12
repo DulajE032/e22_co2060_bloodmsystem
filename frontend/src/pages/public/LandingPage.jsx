@@ -52,7 +52,7 @@ const LandingPage = () => {
                         <h1 className="hero-title">
                             Donate Your Blood & <br /> Inspires to Others
                         </h1>
-                        
+
                         {/* This is the part that centers the button */}
                         <div className="hero-actions-new">
                             <Link to="/donor" className="btn-donate-now">
@@ -81,7 +81,7 @@ const LandingPage = () => {
                                         <p>Join our community of lifesavers. Register today to seamlessly book your donation appointments.</p>
                                     </div>
                                     <div className="service-read-more">
-                                        <Link to="/donor">Register Now</Link>
+                                        <Link to="/donor/register">Register Now</Link>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@ const LandingPage = () => {
                                         <p>Not sure if you can donate blood today? Take our quick, automated health questionnaire to instantly verify your eligibility.</p>
                                     </div>
                                     <div className="service-read-more">
-                                        <Link to="/donor">Take the Quiz</Link>
+                                        <Link to="/donor/eligibility">Take the Quiz</Link>
                                     </div>
                                 </div>
                             </div>
