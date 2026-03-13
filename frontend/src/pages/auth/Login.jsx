@@ -1,7 +1,21 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
+
+/* ── Shared SweetAlert2 theme ─────────────────────────────── */
+const swalBase = {
+    customClass: {
+        popup:          'swal-hopedrop-popup',
+        title:          'swal-hopedrop-title',
+        htmlContainer:  'swal-hopedrop-html',
+        confirmButton:  'swal-hopedrop-confirm',
+        icon:           'swal-hopedrop-icon',
+    },
+    width: 'clamp(260px, 90vw, 380px)',
+    padding: 'clamp(1.2rem, 4vw, 2rem)',
+};
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -13,48 +27,87 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-
-    // Redirect to where they were trying to go, or default to landing/donor dashboard
     const from = location.state?.from?.pathname || '/donor';
 
-    const handleSubmit = (e) => {
+    // ✅ Fixed: added "async" because we use "await" inside
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
+        // ✅ Fixed: validation with Swal INSIDE the if block
         if (!email || !password) {
             setError('Please fill in all fields');
-            return;
+            Swal.fire({
+                ...swalBase,
+                position: 'top-end',
+                icon: 'warning',
+                title: 'Missing Fields',
+                text: 'Please fill in all required fields.',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                toast: true,
+            });
+            return;  // ← stops here if fields are empty
         }
 
         setLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            // ✅ login() now calls the Django API internally (inside AuthContext)
+            const userData = await login(email, password);
+
+            // Success toast
+            Swal.fire({
+                ...swalBase,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Login Successful!',
+                text: `Welcome back, ${userData.username || email.split('@')[0]}.`,
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+                toast: true,
+            }).then(() => {
+                navigate(`/${userData.role || 'donor'}`, { replace: true });
+            });
+
+        } catch (error) {
+            // ❌ Django returned 401 or other error
+            const message = error.response?.data?.detail || 'Invalid credentials';
+            setError(message);
+            Swal.fire({
+                ...swalBase,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Login Failed',
+                text: message,
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                toast: true,
+            });
+        } finally {
             setLoading(false);
-
-            // Extract role from the email we mocked in the dropdown (or default to donor)
-            let selectedRole = 'donor';
-            if (email.includes('@frontend.lk')) {
-                selectedRole = email.split('@')[0];
-            }
-
-            // Mock login success
-            login({ email, name: email.split('@')[0], role: selectedRole });
-
-            // Redirect intentionally to the role dashboard instead of generic 'from'
-            navigate(`/${selectedRole}`, { replace: true });
-        }, 1500);
+        }
     };
 
     return (
         <div className="auth-container">
-            <div className="auth-card glass-panel">
+            <div className="auth-card">
+
+                {/* Logo mark */}
+                <div className="auth-logo-mark">
+                    <div className="logo-icon">🩸</div>
+                    <span className="logo-text">HOPEDROP</span>
+                </div>
+
                 <div className="auth-header">
                     <h2>Welcome Back</h2>
                     <p>Login to access your HOPEDROP dashboard</p>
                 </div>
 
-                {error && <div className="auth-error-message">{error}</div>}
+                {error && <div className="auth-error-message">⚠️ {error}</div>}
 
                 <form className="auth-form" onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -68,29 +121,6 @@ const Login = () => {
                             disabled={loading}
                             className={error && !email ? 'error-input' : ''}
                         />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="role">Login As</label>
-                        <select
-                            id="role"
-                            onChange={(e) => {
-                                // Default to a specific demo state we can use in handleSubmit
-                                setEmail(e.target.value + '@frontend.lk');
-                            }}
-                            disabled={loading}
-                            className="auth-select"
-                            style={{
-                                width: '100%', padding: '0.8rem 1rem', border: '1px solid #E0E0E0',
-                                borderRadius: '4px', marginBottom: '1rem', backgroundColor: 'white'
-                            }}
-                        >
-                            <option value="donor">Donor</option>
-                            <option value="patient">Patient</option>
-                            <option value="doctor">Medical Officer</option>
-                            <option value="staff">Hospital Staff</option>
-                            <option value="admin">System Admin</option>
-                        </select>
                     </div>
 
                     <div className="form-group">
@@ -126,16 +156,14 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        className={`btn-primary auth-submit-btn ${loading ? 'loading' : ''}`}
+                        className={`auth-submit-btn ${loading ? 'loading' : ''}`}
                         disabled={loading}
                     >
                         {loading ? <span className="spinner"></span> : 'Login'}
                     </button>
                 </form>
 
-                <div className="auth-divider">
-                    <span>OR</span>
-                </div>
+                <div className="auth-divider"><span>OR</span></div>
 
                 <div className="social-login">
                     <button className="btn-social btn-google" type="button">
