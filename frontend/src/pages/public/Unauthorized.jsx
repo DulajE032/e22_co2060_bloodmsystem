@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/auth/useAuth';
 import { getRoleConfig } from '../../config/roleConfig';
 import { ShieldAlert } from 'lucide-react';
 import './Unauthorized.css';

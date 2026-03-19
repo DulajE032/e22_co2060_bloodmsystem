@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/auth/useAuth';
 
 /**
  * RoleRoute – protects a route by both authentication AND role.

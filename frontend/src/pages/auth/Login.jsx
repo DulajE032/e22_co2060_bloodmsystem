@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/auth/useAuth';
 import './Login.css';
 
 /* ── Shared SweetAlert2 theme ─────────────────────────────── */
@@ -26,8 +26,6 @@ const Login = () => {
 
     const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || '/donor';
 
     // ✅ Fixed: added "async" because we use "await" inside
     const handleSubmit = async (e) => {
