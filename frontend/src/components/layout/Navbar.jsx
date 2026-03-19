@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Heart, Activity, User, ShieldAlert, LogIn, LogOut, Moon, Sun, Mail, Calendar, ClipboardList, Stethoscope } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/auth/useAuth';
+import { useTheme } from '../../context/theme/ThemeContext';
 import { getRoleConfig, PUBLIC_NAV_ITEMS, ICON_MAP } from '../../config/roleConfig';
 import './Navbar.css';
 import { LOGOS } from '../../config/imageAssets';
@@ -10,7 +10,7 @@ import { LOGOS } from '../../config/imageAssets';
 const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { isAuthenticated, user, role, logout } = useAuth();
+    const { isAuthenticated, role, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);

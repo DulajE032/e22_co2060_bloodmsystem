@@ -1,7 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from '../context/auth/useAuth';
 
 const baseURL = "http://localhost:8000/api";
 

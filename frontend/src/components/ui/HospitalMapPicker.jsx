@@ -127,7 +127,7 @@ const HospitalMapPicker = ({
                 if (results.length === 0 && searchTerm.length >= 3) {
                     setError(`No hospitals found for "${searchTerm}". Try a different name.`);
                 }
-            } catch (err) {
+            } catch {
                 setError('Search failed. Please try again.');
             } finally {
                 setSearching(false);

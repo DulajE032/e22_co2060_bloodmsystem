@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router';
 import {
   Target, Eye, Users, Droplet,
   Shield, Clock, Award, Moon, Sun,
 } from 'lucide-react';
 import { ABOUT_US } from '../../config/imageAssets';
-import { useTheme } from '../../context/ThemeContext';
+import { ThemeContext } from '../../context/theme/ThemeContext';
 import './AboutUs.css';
 
 /* ─── Static Data ─────────────────────────────────────────────────────────── */
@@ -77,7 +77,7 @@ const CORE_VALUES = [
 export function AboutUs() {
   // ── ONLY CHANGE: read theme from ThemeContext instead of local useState ──
   // The Navbar calls the same toggleTheme(), so both stay in sync automatically.
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const dark = theme === 'dark';
   const t = dark ? 'dark' : 'light'; // theme shorthand for className suffixes
 
@@ -192,13 +192,13 @@ export function AboutUs() {
           </div>
 
           <div className="au-values__grid">
-            {CORE_VALUES.map(({ id, Icon, title, description }) => (
-              <div key={id} className={`au-value-card ${t}`}>
+            {CORE_VALUES.map((value) => (
+              <div key={value.id} className={`au-value-card ${t}`}>
                 <div className={`au-value-card__icon ${t}`}>
-                  <Icon size={32} />
+                  {React.createElement(value.Icon, { size: 32 })}
                 </div>
-                <h3 className={`au-value-card__title ${t}`}>{title}</h3>
-                <p className={`au-value-card__desc ${t}`}>{description}</p>
+                <h3 className={`au-value-card__title ${t}`}>{value.title}</h3>
+                <p className={`au-value-card__desc ${t}`}>{value.description}</p>
               </div>
             ))}
           </div>

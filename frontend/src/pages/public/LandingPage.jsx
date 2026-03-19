@@ -6,7 +6,7 @@ import { LANDING } from '../../config/imageAssets';
 import { PHOTOS } from '../../config/imageAssets';
 
 const LandingPage = () => {
-    const [bloodStock, setBloodStock] = useState({
+    const [bloodStock] = useState({
         "O+": "Normal", "A+": "Low", "B+": "Critical", "AB+": "Normal",
         "O-": "Normal", "A-": "Normal", "B-": "Low", "AB-": "Normal"
     });

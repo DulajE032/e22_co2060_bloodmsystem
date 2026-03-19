@@ -16,12 +16,12 @@ import './Services.css';
 import { SERVICES } from '../../config/imageAssets';
 
 // ServiceCard Component
-function ServiceCard({ icon: Icon, title, description, features }) {
+function ServiceCard({ icon, title, description, features }) {
   return (
     <div className="service-card scroll-animate">
       <div className="service-card-header">
         <div className="service-icon-wrapper">
-          <Icon className="service-icon" />
+          {React.createElement(icon, { className: 'service-icon' })}
         </div>
         <h3 className="service-title">{title}</h3>
       </div>
@@ -39,7 +39,14 @@ function ServiceCard({ icon: Icon, title, description, features }) {
 }
 
 // FeaturedService Component
-function FeaturedService({ icon: Icon, title, description, imageUrl, imageAlt, reverse = false }) {
+function FeaturedService({
+  icon,
+  title,
+  description,
+  imageUrl,
+  imageAlt,
+  reverse = false,
+}) {
   return (
     <div className={`featured-service scroll-animate ${reverse ? 'featured-service-reverse' : ''}`}>
       <div className="featured-service-image-wrapper">
@@ -52,7 +59,7 @@ function FeaturedService({ icon: Icon, title, description, imageUrl, imageAlt, r
       <div className="featured-service-content">
         <div className="featured-service-header">
           <div className="featured-icon-wrapper">
-            <Icon className="featured-icon" />
+            {React.createElement(icon, { className: 'featured-icon' })}
           </div>
           <h3 className="featured-title">{title}</h3>
         </div>

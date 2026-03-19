@@ -1,70 +1,75 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';          // ✅ Added: needed for API calls
-import { jwtDecode } from 'jwt-decode';  // ✅ Added: needed to decode JWT tokens
+import { useState } from 'react';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
-
-const AuthContext = createContext();
-
-export const useAuth = () => useContext(AuthContext);
+import { AuthContext } from './auth/AuthContext';
 
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false); //initialize state
-    const [user, setUser] = useState(null);
-    const [authTokens, setAuthTokens] = useState(null);  // ✅ Added: state for tokens
-    const [loading, setLoading] = useState(true);
-
-    // ✅ Fixed: Check localStorage for REAL tokens on page load
-    useEffect(() => {
+    const [authTokens, setAuthTokens] = useState(() => {
         const storedTokens = localStorage.getItem('authTokens');
-        if (storedTokens) {
-            const tokens = JSON.parse(storedTokens);
-            setAuthTokens(tokens);
-            setUser(jwtDecode(tokens.access));
-            setIsAuthenticated(true);
-        }
-        setLoading(false);
-    }, []);
+        return storedTokens ? JSON.parse(storedTokens) : null;
+    });
 
-    // ✅ Fixed: login receives email & password, calls Django API
+    const [user, setUser] = useState(() => {
+        const storedTokens = localStorage.getItem('authTokens');
+        if (!storedTokens) {
+            return null;
+        }
+
+        try {
+            const tokens = JSON.parse(storedTokens);
+            return tokens?.access ? jwtDecode(tokens.access) : null;
+        } catch {
+            localStorage.removeItem('authTokens');
+            return null;
+        }
+    });
+
+    const [isAuthenticated, setIsAuthenticated] = useState(
+        () => Boolean(localStorage.getItem('authTokens')),
+    );
+
+    const [loading] = useState(false);
+
     const login = async (email, password) => {
-        const response = await axios.post("http://localhost:8000/api/token/", {
+        const response = await axios.post('http://localhost:8000/api/token/', {
             email,
             password,
         });
 
-        const tokens = response.data;               // { access: "eyJ...", refresh: "eyJ..." }
-        const userData = jwtDecode(tokens.access);   // decode to get user info
+        const tokens = response.data;
+        const userData = jwtDecode(tokens.access);
 
         setAuthTokens(tokens);
         setUser(userData);
         setIsAuthenticated(true);
-        localStorage.setItem("authTokens", JSON.stringify(tokens));
+        localStorage.setItem('authTokens', JSON.stringify(tokens));
 
-        return userData;  // return user data so Login.jsx can use it
+        return userData;
     };
 
     const logout = () => {
         Swal.fire({
             title: 'Are you sure?',
-            text: "You will be logged out of your current session!",
+            text: 'You will be logged out of your current session!',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#C62828',
             cancelButtonColor: '#637381',
-            confirmButtonText: 'Yes, log me out'
+            confirmButtonText: 'Yes, log me out',
         }).then((result) => {
             if (result.isConfirmed) {
                 setIsAuthenticated(false);
                 setUser(null);
                 setAuthTokens(null);
-                localStorage.removeItem('authTokens');  // ✅ Fixed: correct key
+                localStorage.removeItem('authTokens');
 
                 Swal.fire({
                     title: 'Logged Out!',
                     text: 'You have been successfully logged out.',
                     icon: 'success',
                     confirmButtonColor: '#C62828',
-                    timer: 1500
+                    timer: 1500,
                 });
             }
         });
@@ -73,13 +78,13 @@ export const AuthProvider = ({ children }) => {
     const value = {
         isAuthenticated,
         user,
-        role: user?.role || null,   // ✅ Role from JWT for navbar & route guards
-        authTokens,      // ✅ Added: expose tokens for useAxios hook
-        setAuthTokens,   // ✅ Added: expose setter for useAxios hook
-        setUser,         // ✅ Added: expose setter for useAxios hook
+        role: user?.role || null,
+        authTokens,
+        setAuthTokens,
+        setUser,
         login,
         logout,
-        loading
+        loading,
     };
 
     return (
