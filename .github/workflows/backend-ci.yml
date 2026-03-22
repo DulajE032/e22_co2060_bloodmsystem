@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backEnd/main
+        working-directory: backEnd/config
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
-          cache-dependency-path: backEnd/main/requirements.txt
+          cache-dependency-path: backEnd/config/requirements.txt
 
       - name: Install system dependencies
         run: |

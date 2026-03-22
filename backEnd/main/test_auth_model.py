@@ -7,12 +7,12 @@ import os
 import django
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from UserAuth.models import Profile
+from backEnd.main.apps.UserAuth import Profile
 
 
 def main():
     # Set up Django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'main.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
     django.setup()
 
     print("=" * 60)
