@@ -9,9 +9,6 @@ class Country(models.Model):
     def __str__(self):
         return self.countryName
 
-    class Meta:
-        app_label = 'UserAuth'
-
 
 class District(models.Model):
     districtName = models.CharField(max_length=20)
@@ -25,4 +22,4 @@ class District(models.Model):
         unique_together = ("districtName", "country")
 
     def __str__(self):
-        return self.districtName, self.country
+        return f"{self.districtName} ({self.country})"

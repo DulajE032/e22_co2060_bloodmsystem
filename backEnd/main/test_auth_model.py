@@ -8,7 +8,7 @@ import django
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from backEnd.main.apps.UserAuth import Profile
+from apps.UserAuth.models import Profile
 
 
 def main():

@@ -24,7 +24,7 @@ try:
     print(f"✓ User Model: {User.__module__}.{User.__name__}")
     sys.stdout.flush()
 
-    from backEnd.main.apps.UserAuth import Profile
+    from apps.UserAuth.models import Profile
     print(f"✓ Profile Model loaded: {Profile}")
     sys.stdout.flush()
 

@@ -12,6 +12,9 @@ This project uses Ruff for backend linting.
 - Fixed API URL formatting in `main/api/v1/urls.py` (`E225`, `E122`, `E231`).
 - Reduced complexity of `resolve_hospital` in `main/apps/UserAuth/views.py` to satisfy `C901` by extracting helper functions.
 - Fixed app-list comment style in `main/config/settings.py` (`E122`, `E265`).
+- Removed `Country.Meta.app_label` in `main/apps/UserAuth/models/location.py` to avoid duplicate model registration from mixed import paths.
+- Standardized imports to canonical app path (`apps.UserAuth...`) in `main/verify_setup.py` and `main/test_auth_model.py`.
+- Removed `main/__init__.py` so test discovery no longer builds `backEnd.main...` module names.
 
 ## Why migrations ignore `E501`
 
@@ -47,6 +50,6 @@ Run Django checks:
 ## Current status
 
 - Ruff: `All checks passed!`
-- Django check: one warning remains for missing static directory:
-  - `backEnd/main/static` does not exist (from `STATICFILES_DIRS`).
+- Django check: `System check identified no issues (0 silenced).`
+- Django tests: project starts test discovery without conflicting model import errors.
 

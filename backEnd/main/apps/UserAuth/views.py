@@ -1,6 +1,5 @@
 
 from decimal import Decimal, InvalidOperation
-
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
@@ -8,7 +7,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-
 from .models.hospital import Hospital
 from .models.models import Profile
 from .serializer.payload.payload import MyTokenObtainPairSerializer
@@ -193,16 +191,16 @@ def get_user_info(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def resolve_hospital(request):
-    place_id = request.data.get("place_id")
+    placeId = request.data.get("placeId") or request.data.get("place_id")
     name = request.data.get("name")
     lat = request.data.get("lat")
     lon = request.data.get("lon")
     address = request.data.get("address", "")
 
-    if not place_id or not name:
+    if not placeId or not name:
         return Response({"error": "place_id and name are required"}, status=400)
 
-    place_id, error = _parse_place_id(place_id)
+    placeId, error = _parse_place_id(placeId)
     if error:
         return error
 
@@ -215,7 +213,7 @@ def resolve_hospital(request):
         return error
 
     hospital, created = Hospital.objects.get_or_create(
-        osm_place_id=place_id,
+        osm_place_id=placeId,
         defaults={
             "hosName": name[:30],
             "latitude": latitude,
