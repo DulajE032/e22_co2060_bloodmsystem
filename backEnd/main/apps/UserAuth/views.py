@@ -18,6 +18,42 @@ from .serializer.response.serializer import ProfileSerializer, UserSerializer
 User = get_user_model()
 
 
+def _parse_place_id(value):
+    try:
+        return int(value), None
+    except (TypeError, ValueError):
+        return None, Response({"error": "place_id must be a valid integer"}, status=400)
+
+
+def _parse_decimal(value, field_name):
+    if value is None or value == "":
+        return None, None
+    try:
+        return Decimal(str(value)), None
+    except (InvalidOperation, ValueError):
+        return None, Response(
+            {"error": f"{field_name} must be a valid number"},
+            status=400,
+        )
+
+
+def _update_hospital_if_changed(hospital, latitude, longitude, address):
+    changed = False
+
+    if latitude is not None and hospital.latitude != latitude:
+        hospital.latitude = latitude
+        changed = True
+    if longitude is not None and hospital.longitude != longitude:
+        hospital.longitude = longitude
+        changed = True
+    if address and hospital.address != address:
+        hospital.address = address
+        changed = True
+
+    if changed:
+        hospital.save()
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     """
     Custom JWT Token view that returns user data along with tokens
@@ -166,24 +202,17 @@ def resolve_hospital(request):
     if not place_id or not name:
         return Response({"error": "place_id and name are required"}, status=400)
 
-    try:
-        place_id = int(place_id)
-    except (TypeError, ValueError):
-        return Response({"error": "place_id must be a valid integer"}, status=400)
+    place_id, error = _parse_place_id(place_id)
+    if error:
+        return error
 
-    latitude = None
-    longitude = None
-    if lat is not None and lat != "":
-        try:
-            latitude = Decimal(str(lat))
-        except (InvalidOperation, ValueError):
-            return Response({"error": "lat must be a valid number"}, status=400)
+    latitude, error = _parse_decimal(lat, "lat")
+    if error:
+        return error
 
-    if lon is not None and lon != "":
-        try:
-            longitude = Decimal(str(lon))
-        except (InvalidOperation, ValueError):
-            return Response({"error": "lon must be a valid number"}, status=400)
+    longitude, error = _parse_decimal(lon, "lon")
+    if error:
+        return error
 
     hospital, created = Hospital.objects.get_or_create(
         osm_place_id=place_id,
@@ -195,19 +224,7 @@ def resolve_hospital(request):
         },
     )
 
-    # Optional: update changed details
     if not created:
-        changed = False
-        if latitude is not None and hospital.latitude != latitude:
-            hospital.latitude = latitude
-            changed = True
-        if longitude is not None and hospital.longitude != longitude:
-            hospital.longitude = longitude
-            changed = True
-        if address and hospital.address != address:
-            hospital.address = address
-            changed = True
-        if changed:
-            hospital.save()
+        _update_hospital_if_changed(hospital, latitude, longitude, address)
 
     return Response({"id": hospital.id, "name": hospital.hosName}, status=200)
