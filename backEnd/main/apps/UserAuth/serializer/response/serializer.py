@@ -32,6 +32,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
+
         fields = [
             "id",
             "hosName",
