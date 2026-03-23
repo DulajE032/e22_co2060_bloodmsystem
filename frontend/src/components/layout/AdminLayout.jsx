@@ -23,7 +23,8 @@ const AdminLayout = () => {
     
     // Close mobile sidebar on route change
     useEffect(() => {
-        setIsMobileOpen(false);
+        if (isMobileOpen) setIsMobileOpen(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
     const handleLogout = () => {

@@ -77,7 +77,7 @@ const CORE_VALUES = [
 export function AboutUs() {
   // ── ONLY CHANGE: read theme from ThemeContext instead of local useState ──
   // The Navbar calls the same toggleTheme(), so both stay in sync automatically.
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const dark = theme === 'dark';
   const t = dark ? 'dark' : 'light'; // theme shorthand for className suffixes
 
