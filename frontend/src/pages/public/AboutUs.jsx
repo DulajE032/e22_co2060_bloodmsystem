@@ -77,7 +77,7 @@ const CORE_VALUES = [
 export function AboutUs() {
   // ── ONLY CHANGE: read theme from ThemeContext instead of local useState ──
   // The Navbar calls the same toggleTheme(), so both stay in sync automatically.
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const dark = theme === 'dark';
   const t = dark ? 'dark' : 'light'; // theme shorthand for className suffixes
 
@@ -106,20 +106,7 @@ export function AboutUs() {
   return (
     <div className={`au-page ${t}`}>
 
-      {/* ══════════════ THEME TOGGLE ══════════════ */}
-      <button className={`au-toggle ${t}`} onClick={toggleTheme}>
-        {dark ? (
-          <>
-            <Sun className="au-toggle__icon sun" />
-            <span>Light Mode</span>
-          </>
-        ) : (
-          <>
-            <Moon className="au-toggle__icon moon" />
-            <span>Night Mode</span>
-          </>
-        )}
-      </button>
+
 
       {/* ══════════════ HERO ══════════════ */}
       <section className="au-hero animate-on-scroll" style={{

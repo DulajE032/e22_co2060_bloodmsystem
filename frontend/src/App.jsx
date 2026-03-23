@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import RoleRoute from './api/RoleRoute';
-import Navbar from './components/layout/Navbar';
+import MainLayout from './components/layout/MainLayout';
+import AdminLayout from './components/layout/AdminLayout';
 import LandingPage from './pages/public/LandingPage';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
@@ -12,6 +13,7 @@ import DonorRegistration from './pages/donor/DonorRegistration';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import LabDashboard from './pages/staff/LabDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import DummyAdminPage from './pages/admin/DummyAdminPage';
 import PatientDashboard from './pages/patient/PatientDashboard';
 import ContactPage from './pages/public/ContactPage';
 import Events from "./pages/events/Events";
@@ -26,70 +28,78 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
-          <div className="app-container">
-            <Navbar />
-            <main className="main-content">
-              <Routes>
-                {/* ─── Public Routes ─── */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/about-us" element={<AboutUs />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/unauthorized" element={<Unauthorized />} />
+          <Routes>
+            {/* ─── Main Layout Routes (Public + Regular Authed) ─── */}
+            <Route element={<MainLayout />}>
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
-                {/* ─── Donor Routes (donor + admin) ─── */}
-                <Route path="/donor" element={
-                  <RoleRoute allowedRoles={['donor', 'admin']}>
-                    <DonorDashboard />
-                  </RoleRoute>
-                } />
-                <Route path="/donor/eligibility" element={
-                  <RoleRoute allowedRoles={['donor', 'admin']}>
-                    <DonorEligibility />
-                  </RoleRoute>
-                } />
-                <Route path="/donor/register" element={
-                  <RoleRoute allowedRoles={['donor', 'admin']}>
-                    <DonorRegistration />
-                  </RoleRoute>
-                } />
+              {/* Donor Routes */}
+              <Route path="/donor" element={
+                <RoleRoute allowedRoles={['donor', 'admin']}>
+                  <DonorDashboard />
+                </RoleRoute>
+              } />
+              <Route path="/donor/eligibility" element={
+                <RoleRoute allowedRoles={['donor', 'admin']}>
+                  <DonorEligibility />
+                </RoleRoute>
+              } />
+              <Route path="/donor/register" element={
+                <RoleRoute allowedRoles={['donor', 'admin']}>
+                  <DonorRegistration />
+                </RoleRoute>
+              } />
 
-                {/* ─── Doctor / Medical Routes (doctor + medical_officer + admin) ─── */}
-                <Route path="/doctor" element={
-                  <RoleRoute allowedRoles={['doctor', 'medical_officer', 'admin']}>
-                    <DoctorDashboard />
-                  </RoleRoute>
-                } />
+              {/* Doctor / Medical Routes */}
+              <Route path="/doctor" element={
+                <RoleRoute allowedRoles={['doctor', 'medical_officer', 'admin']}>
+                  <DoctorDashboard />
+                </RoleRoute>
+              } />
 
-                {/* ─── Lab / Staff Routes (medical_officer + admin) ─── */}
-                <Route path="/staff" element={
-                  <RoleRoute allowedRoles={['medical_officer', 'admin']}>
-                    <LabDashboard />
-                  </RoleRoute>
-                } />
+              {/* Lab / Staff Routes */}
+              <Route path="/staff" element={
+                <RoleRoute allowedRoles={['medical_officer', 'admin']}>
+                  <LabDashboard />
+                </RoleRoute>
+              } />
 
-                {/* ─── Admin Routes (admin only) ─── */}
-                <Route path="/admin" element={
-                  <RoleRoute allowedRoles={['admin']}>
-                    <AdminDashboard />
-                  </RoleRoute>
-                } />
+              {/* Patient Routes */}
+              <Route path="/patient" element={
+                <RoleRoute allowedRoles={['doctor', 'medical_officer', 'admin']}>
+                  <PatientDashboard />
+                </RoleRoute>
+              } />
+            </Route>
 
-                {/* ─── Patient Routes (doctor + medical_officer + admin) ─── */}
-                <Route path="/patient" element={
-                  <RoleRoute allowedRoles={['doctor', 'medical_officer', 'admin']}>
-                    <PatientDashboard />
-                  </RoleRoute>
-                } />
+            {/* ─── Admin Layout Routes (Admin Only) ─── */}
+            <Route element={
+              <RoleRoute allowedRoles={['admin']}>
+                <AdminLayout />
+              </RoleRoute>
+            }>
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/admin-dashboard/stock" element={<DummyAdminPage title="Blood Stock" />} />
+              <Route path="/admin-dashboard/requests" element={<DummyAdminPage title="Requests" />} />
+              <Route path="/admin-dashboard/users" element={<DummyAdminPage title="Users" />} />
+              <Route path="/admin-dashboard/donors" element={<DummyAdminPage title="Donors" />} />
+              <Route path="/admin-dashboard/hospitals" element={<DummyAdminPage title="Hospitals" />} />
+              <Route path="/admin-dashboard/analytics" element={<DummyAdminPage title="Analytics" />} />
+              <Route path="/admin-dashboard/logs" element={<DummyAdminPage title="Logs" />} />
+              <Route path="/admin-dashboard/settings" element={<DummyAdminPage title="Settings" />} />
+            </Route>
 
-                {/* Catch all redirect to landing page */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-          </div>
+            {/* Catch all redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
