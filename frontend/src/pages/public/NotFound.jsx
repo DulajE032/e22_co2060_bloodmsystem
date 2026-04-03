@@ -27,7 +27,7 @@ const NotFound = () => {
 
                 <div className="not-found-actions">
                     <button className="btn-back-history" onClick={() => window.history.back()}>
-                        <ArrowLeft size={18} /> GO BACK
+                        <ArrowLeft size={18} /> GO BACK TO HOME
                     </button>
                     <Link to="/" className="btn-return-home">
                         RETURN HOME
