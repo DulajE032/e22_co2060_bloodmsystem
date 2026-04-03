@@ -55,7 +55,6 @@ const SignUp = () => {
         setFieldErrors,
         handleChange,
         handleBlur,
-        validateAll,
         inputClass
     } = useForm({
         role: '',
@@ -103,7 +102,7 @@ const SignUp = () => {
         } else {
             setDistricts([]);
         }
-    }, [formData.country]);
+    }, [formData.country, setFormData]);
 
     useEffect(() => {
         let strength = 0;
