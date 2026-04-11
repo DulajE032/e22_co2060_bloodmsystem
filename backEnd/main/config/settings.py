@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     # apps
     'apps.UserAuth',
+    'apps.blood.bloodInventor'
 
     'rest_framework_simplejwt.token_blacklist',
     'phonenumber_field',
