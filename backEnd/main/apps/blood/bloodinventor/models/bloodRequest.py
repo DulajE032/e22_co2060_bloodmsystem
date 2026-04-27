@@ -1,7 +1,7 @@
 from django.db import models
 
 
-from ....medicalOfficers.models.doctor import DoctorProfile
+from ....medicalOfficers.models.doctor import Doctor
 from ....medicalOfficers.models.hospitalStaff import StaffProfile
 
 
@@ -15,7 +15,7 @@ class BloodRequest(models.Model):
         FULFILLED = "FULFILLED", "Fulfilled"
         CANCELLED = "CANCELLED", "Cancelled"
 
-    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE, related_name="blood_requests")
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="blood_requests")
     blood_group = models.CharField(max_length=5)  # e.g. A+, O-
     units_requested = models.PositiveIntegerField()
     units_approved = models.PositiveIntegerField(default=0)

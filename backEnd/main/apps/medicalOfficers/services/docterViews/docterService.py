@@ -19,8 +19,8 @@ class UpdateDoctorImageView(generics.UpdateAPIView):
     def get_object(self):
         user = self.request.user
 
-        if not hasattr(user, "doctorprofile"):
+        if not hasattr(user, "doctor_profile"):
             raise NotFound("Doctor profile not found")
 
-        return user.doctorprofile
+        return user.doctor_profile
 

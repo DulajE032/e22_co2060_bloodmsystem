@@ -7,9 +7,16 @@ const api = axios.create({
 // Automatically add JWT token to headers
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const storedTokens = localStorage.getItem('authTokens');
+    if (storedTokens) {
+      try {
+        const tokens = JSON.parse(storedTokens);
+        if (tokens.access) {
+          config.headers.Authorization = `Bearer ${tokens.access}`;
+        }
+      } catch (error) {
+        console.error("Error parsing auth tokens", error);
+      }
     }
     return config;
   },

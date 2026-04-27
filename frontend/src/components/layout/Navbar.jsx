@@ -31,6 +31,18 @@ const Navbar = () => {
         navigate('/login');
     };
 
+    //handle home click: if already on home, scroll to top and refresh data; otherwise, just navigate
+    const handleHomeClick = (e) => {
+        if (location.pathname === '/') {
+            e.preventDefault();
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Force a reload to refresh data and come to top
+            window.location.reload(); 
+        }
+        closeMenu();
+    };
+
     // ─── Scroll detection ───
     useEffect(() => {
         const onScroll = () => {
@@ -74,25 +86,35 @@ const Navbar = () => {
             <nav className={`nav ${scrolled ? 'scrolled' : ''} ${isHomePage ? 'on-home' : ''}`} id="nav">
 
                 {/* LOGO (left side) */}
-                <Link to="/" className="nav-logo nav-logo-home">
+                <Link to="/" className="nav-logo nav-logo-home" onClick={handleHomeClick}>
                     <img src={LOGOS.icon} alt="HOPEDROP Logo" className="nav-logo-img" />
                     <span className="logo-text">HOPEDROP</span>
                 </Link>
 
                 {/* DESKTOP LINKS (center — hidden below 1024px) */}
                 <div className="nav-links">
-                    {/* Role-specific links (only when logged in) */}
-                    {isAuthenticated && roleNavItems.map((item) => (
-                        <Link key={item.path} to={item.path} className={`${navLinkClass(item.path)} nav-link-home`}>
-                            {renderIcon(item.icon)}
+                    {/* Public links (always visible) */}
+                    {PUBLIC_NAV_ITEMS.map((item) => (
+                        <Link 
+                            key={item.path} 
+                            to={item.path} 
+                            className={`${navLinkClass(item.path)} nav-link-home`}
+                            onClick={item.path === '/' ? handleHomeClick : closeMenu}
+                        >
+                            {item.icon && renderIcon(item.icon)}
                             <span>{item.label}</span>
                         </Link>
                     ))}
 
-                    {/* Public links (always visible) */}
-                    {PUBLIC_NAV_ITEMS.map((item) => (
-                        <Link key={item.path} to={item.path} className={`${navLinkClass(item.path)} nav-link-home`}>
-                            {item.icon && renderIcon(item.icon)}
+                    {/* Role-specific links (only when logged in) */}
+                    {isAuthenticated && roleNavItems.map((item) => (
+                        <Link 
+                            key={item.path} 
+                            to={item.path} 
+                            className={`${navLinkClass(item.path)} nav-link-home`}
+                            onClick={item.path === '/' ? handleHomeClick : closeMenu}
+                        >
+                            {renderIcon(item.icon)}
                             <span>{item.label}</span>
                         </Link>
                     ))}
@@ -149,7 +171,7 @@ const Navbar = () => {
             <div className={`sidebar-overlay ${menuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
             <aside className={`glass-sidebar ${menuOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
-                    <Link to="/" className="nav-logo" onClick={closeMenu}>
+                    <Link to="/" className="nav-logo" onClick={handleHomeClick}>
                         <img src={LOGOS.icon} alt="HOPEDROP Logo" className="nav-logo-img" />
                         <span className="logo-text">HOPEDROP</span>
                     </Link>
@@ -159,17 +181,27 @@ const Navbar = () => {
                 </div>
 
                 <div className="sidebar-content">
-                    {/* Role-specific links */}
-                    {isAuthenticated && roleNavItems.map((item) => (
-                        <Link key={`side-${item.path}`} to={item.path} className={sidebarLinkClass(item.path)} onClick={closeMenu}>
+                    {/* Public links */}
+                    {PUBLIC_NAV_ITEMS.map((item) => (
+                        <Link 
+                            key={`side-${item.path}`} 
+                            to={item.path} 
+                            className={sidebarLinkClass(item.path)} 
+                            onClick={item.path === '/' ? handleHomeClick : closeMenu}
+                        >
                             <div className="sidebar-icon-wrapper">{renderIcon(item.icon, 20)}</div>
                             <span className="sidebar-label">{item.label}</span>
                         </Link>
                     ))}
-                    
-                    {/* Public links */}
-                    {PUBLIC_NAV_ITEMS.map((item) => (
-                        <Link key={`side-${item.path}`} to={item.path} className={sidebarLinkClass(item.path)} onClick={closeMenu}>
+
+                    {/* Role-specific links */}
+                    {isAuthenticated && roleNavItems.map((item) => (
+                        <Link 
+                            key={`side-${item.path}`} 
+                            to={item.path} 
+                            className={sidebarLinkClass(item.path)} 
+                            onClick={item.path === '/' ? handleHomeClick : closeMenu}
+                        >
                             <div className="sidebar-icon-wrapper">{renderIcon(item.icon, 20)}</div>
                             <span className="sidebar-label">{item.label}</span>
                         </Link>
