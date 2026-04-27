@@ -163,7 +163,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-CORS_ALLOW_CREDENTIALS = True  # It tells browser that sending cookies is safe.
+#CORS_ALLOW_CREDENTIALS = True  # It tells browser that sending cookies is safe.
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (for development only, be careful in production)
 
 # REST Framework Settings
 REST_FRAMEWORK = {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Edit2, Trash2, MessageSquare, Plus, Search, Eye, EyeOff, Download, Send, Filter } from 'lucide-react';
 import {
   fetchAllDoctors,
-  searchDoctors,
+
   deleteDoctor,
   createDoctorCredentials,
   sendMessageToDoctor,

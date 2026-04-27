@@ -8,7 +8,7 @@ const getAuthToken = () => {
 
 // Create axios instance for doctor operations
 const doctorAPI = axios.create({
-  baseURL: 'http://localhost:8000/api/v1',
+  baseURL: 'http://localhost:8000/api/v1/adminDashboard',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,7 +32,7 @@ doctorAPI.interceptors.request.use((config) => {
  */
 export const fetchAllDoctors = async () => {
   try {
-    const response = await doctorAPI.get('/doctors/');
+    const response = await doctorAPI.get('/doctors/list/');
     return {
       success: true,
       data: response.data,
@@ -52,9 +52,9 @@ export const fetchAllDoctors = async () => {
  * GET /doctors/:id/
  * Returns: Doctor details
  */
-export const fetchDoctorById = async (doctorId) => {
+export const fetchDoctorById = async (id) => {
   try {
-    const response = await doctorAPI.get(`/doctors/${doctorId}/`);
+    const response = await doctorAPI.get(`/doctor/profile/${id}/`);
     return {
       success: true,
       data: response.data,
@@ -76,7 +76,7 @@ export const fetchDoctorById = async (doctorId) => {
  */
 export const searchDoctors = async (searchTerm) => {
   try {
-    const response = await doctorAPI.get('/doctors/', {
+    const response = await doctorAPI.get('/doctors/list', {
       params: { search: searchTerm },
     });
     return {
@@ -110,7 +110,7 @@ export const searchDoctors = async (searchTerm) => {
  */
 export const createDoctor = async (doctorData) => {
   try {
-    const response = await doctorAPI.post('/doctors/', doctorData);
+    const response = await doctorAPI.post('/doctor/create/', doctorData);
     return {
       success: true,
       data: response.data,
@@ -134,7 +134,7 @@ export const createDoctor = async (doctorData) => {
  */
 export const updateDoctor = async (doctorId, updateData) => {
   try {
-    const response = await doctorAPI.put(`/doctors/${doctorId}/`, updateData);
+    const response = await doctorAPI.put(`/doctor/profile/${doctorId}/`, updateData);
     return {
       success: true,
       data: response.data,
@@ -213,7 +213,7 @@ export const resetDoctorPassword = async (doctorId, newPassword) => {
  */
 export const deleteDoctor = async (doctorId) => {
   try {
-    const response = await doctorAPI.delete(`/doctors/${doctorId}/`);
+    const response = await doctorAPI.delete(`/doctor/profile/${doctorId}/`);
     return {
       success: true,
       data: response.data,
@@ -265,7 +265,7 @@ export const sendMessageToDoctor = async (doctorId, subject, message) => {
  */
 export const getDoctorStats = async () => {
   try {
-    const response = await doctorAPI.get('/doctors/stats/');
+    const response = await doctorAPI.get('/doctor/total/');
     return {
       success: true,
       data: response.data,

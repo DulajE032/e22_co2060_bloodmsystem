@@ -4,10 +4,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import RoleRoute from './api/RoleRoute';
 import MainLayout from './components/layout/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
+import ScrollToTop from './components/utils/ScrollToTop';
 
 import LandingPage from './pages/public/LandingPage';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorEligibility from './pages/donor/DonorEligibility';
 import DonorRegistration from './pages/donor/DonorRegistration';
@@ -30,12 +33,15 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Main Layout Routes (Public + Regular Authed) */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/events" element={<Events />} />
               <Route path="/about-us" element={<AboutUs />} />
