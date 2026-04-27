@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDonorProfile, updateDonorProfile } from '../../services/donorService';
 import { QRCodeCanvas } from 'qrcode.react';
 import Swal from 'sweetalert2';
+import { Bell, MapPin, Search, Activity, CheckCircle, XCircle } from 'lucide-react';
 import './DonorDashboard.css';
 const DonorSideBar = ({ profile, currentView, setView, onUpdate, isMobileOpen, closeMobileMenu }) => {
   const navigate = useNavigate();
@@ -202,47 +203,157 @@ const ProfileView = ({ profile, onUpdate }) => {
     </div>
   );
 };
-const DashboardOverview = ({ profile }) => (
-  <div className="animate-in">
-    <p className="page-subtitle">Welcome back, {profile?.fullName || 'Donor'}. Here is your donation status.</p>
-    <div className="stats-grid grid-responsive-3">
-      <div className="stat-card">
-        <div className="stat-icon icon-red"><Droplets size={24} /></div>
-        <p className="stat-label">Blood Group</p>
-        <h3 className="stat-value">{profile?.blood_group || '--'}</h3>
+const DashboardOverview = ({ profile, onToggleAvailability }) => {
+  // Add some mocked calculation for Next Eligible Date
+  const calculateNextEligible = (lastDate) => {
+    if (!lastDate) return 'Eligible Now';
+    const last = new Date(lastDate);
+    const next = new Date(last.setDate(last.getDate() + 90)); // Assuming 90 days gap
+    return next > new Date() ? next.toLocaleDateString() : 'Eligible Now';
+  };
+
+  const nextEligible = calculateNextEligible(profile?.last_donation);
+  const isAvailable = profile?.is_available ?? true; // Defaults to true if missing
+
+  // Mock nearby activity & alerts (to be replaced by API in next phase)
+  const alerts = [
+    { id: 1, type: 'info', message: 'You are eligible to donate blood today!' }
+  ];
+  const nearbyRequests = [
+    { id: 1, title: 'Urgent: O+ Blood Needed', location: 'City Hospital (2km)', urgency: '🔴 Urgent' },
+    { id: 2, title: 'Blood Camp: Summer Drive', location: 'Town Hall (5km)', urgency: '🟢 Normal' }
+  ];
+
+  return (
+    <div className="dashboard-v2 animate-in">
+      <div className="welcome-banner">
+        <div>
+          <h1 className="page-title" style={{ marginBottom: '4px' }}>Hi, {profile?.fullName?.split(' ')[0] || 'Donor'}!</h1>
+          <p className="page-subtitle">Your quick donation dashboard.</p>
+        </div>
       </div>
-      <div className="stat-card">
-        <div className="stat-icon icon-blue"><History size={24} /></div>
-        <p className="stat-label">Total Donations</p>
-        <h3 className="stat-value">{profile?.donations || '0'}</h3>
+
+      {alerts.length > 0 && (
+        <div className="alerts-section">
+          {alerts.map(a => (
+            <div key={a.id} className="alert-card info-alert">
+              <Bell size={18} /> <span>{a.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 1. Top Section - Summary Cards */}
+      <div className="stats-grid grid-responsive-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+        <div className="stat-card">
+          <p className="stat-label">Blood Group</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+            <Droplets size={24} className="icon-red" />
+            <h2 className="stat-value" style={{ margin: 0, fontSize: '1.8rem' }}>{profile?.blood_group || '--'}</h2>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <p className="stat-label">Last Donation</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+            <History size={24} className="icon-blue" />
+            <h3 className="stat-value" style={{ margin: 0, fontSize: '1.2rem' }}>
+               {profile?.last_donation ? new Date(profile.last_donation).toLocaleDateString() : 'N/A'}
+            </h3>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <p className="stat-label">Next Eligible Date</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+            <Calendar size={24} className="icon-green" />
+            <h3 className="stat-value" style={{ margin: 0, fontSize: '1.2rem', color: nextEligible === 'Eligible Now' ? '#10b981' : 'inherit' }}>
+              {nextEligible}
+            </h3>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <p className="stat-label">Status</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+            {isAvailable ? <CheckCircle size={24} className="icon-green" /> : <XCircle size={24} color="#6b7280" />}
+            <h3 className="stat-value" style={{ margin: 0, fontSize: '1.2rem', color: isAvailable ? '#10b981' : '#6b7280' }}>
+              {isAvailable ? 'Available' : 'Unavailable'}
+            </h3>
+          </div>
+        </div>
       </div>
-      <div className="stat-card">
-        <div className="stat-icon icon-green"><Calendar size={24} /></div>
-        <p className="stat-label">Last Donation</p>
-        <h3 className="stat-value">
-          {profile?.last_donation ? new Date(profile.last_donation).toLocaleDateString() : 'N/A'}
-        </h3>
+
+      {/* 2. Middle Section - Main Actions */}
+      <h3 className="section-heading" style={{ marginTop: '2rem', marginBottom: '1rem', fontSize: '1.2rem' }}>Quick Actions</h3>
+      <div className="main-actions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+        <button 
+          className="action-btn toggle-status-btn" 
+          onClick={onToggleAvailability}
+          style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: isAvailable ? '#fee2e2' : '#dcfce7', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+        >
+          <Activity size={24} color={isAvailable ? "#ef4444" : "#10b981"} />
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#374151' }}>
+            Mark as {isAvailable ? 'Unavailable' : 'Available'}
+          </span>
+        </button>
+
+        <button className="action-btn" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <Search size={24} className="icon-blue" />
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#374151' }}>Find Blood Requests</span>
+        </button>
+
+        <button className="action-btn" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <MapPin size={24} className="icon-red" />
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#374151' }}>Nearby Camps</span>
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+        {/* 3. Nearby Activity */}
+        <div className="nearby-section">
+           <h3 className="section-heading" style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>Nearby Activity</h3>
+           <div className="nearby-list">
+             {nearbyRequests.map(item => (
+               <div key={item.id} className="nearby-card" style={{ padding: '1rem', background: 'white', border: '1px solid #e5e7eb', borderRadius: '8px', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                 <div>
+                   <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: '#111827' }}>{item.title}</h4>
+                   <p style={{ margin: 0, fontSize: '0.85rem', color: '#6b7280' }}><MapPin size={12} style={{ display: 'inline', marginRight: '4px' }}/>{item.location}</p>
+                 </div>
+                 <div style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: item.urgency.includes('Urgent') ? '#fee2e2' : '#dcfce7', color: item.urgency.includes('Urgent') ? '#b91c1c' : '#15803d' }}>
+                   {item.urgency}
+                 </div>
+               </div>
+             ))}
+           </div>
+        </div>
+
+        {/* 4. QR Code & Stats */}
+        <div className="qr-section stat-card centered-card" style={{ margin: 0 }}>
+          <div className="qr-header">
+            <QrCode size={24} /> <h2 style={{ fontSize: '1.2rem'}}>Your Donor QR Code</h2>
+          </div>
+          <div className="qr-box">
+            {profile?.qr_id ? (
+              <QRCodeCanvas 
+                value={`${window.location.origin}/donor/scan/${profile.qr_id}`} size={160} level={"H"} includeMargin={true}
+                imageSettings={{ src: "/favicon.svg", height: 40, width: 40, excavate: true }}
+              />
+            ) : (
+              <div className="qr-placeholder">QR ID not available</div>
+            )}
+          </div>
+          <div className="qr-id-tag">ID: {profile?.qr_id || 'Generating...'}</div>
+          
+          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb', width: '100%' }}>
+             <p className="stat-label" style={{ marginBottom: '8px' }}>Total Contributions</p>
+             <h3 className="stat-value">{profile?.donations || '0'} Donations</h3>
+          </div>
+        </div>
       </div>
     </div>
-    <div className="qr-section stat-card centered-card">
-      <div className="qr-header">
-        <QrCode size={24} /> <h2>Your Donor QR Code</h2>
-      </div>
-      <div className="qr-box">
-        {profile?.qr_id ? (
-          <QRCodeCanvas 
-            value={`${window.location.origin}/donor/scan/${profile.qr_id}`} size={180} level={"H"} includeMargin={true}
-            imageSettings={{ src: "/favicon.svg", height: 40, width: 40, excavate: true }}
-          />
-        ) : (
-          <div className="qr-placeholder">QR ID not available</div>
-        )}
-      </div>
-      <p className="qr-desc">Show this QR code at any donation center to quickly access your profile and record your donation.</p>
-      <div className="qr-id-tag">ID: {profile?.qr_id || 'Generating...'}</div>
-    </div>
-  </div>
-);
+  );
+};
 const DonorDashboard = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -259,6 +370,26 @@ const DonorDashboard = () => {
       setLoading(false);
     }
   };
+
+  const handleToggleAvailability = async () => {
+    if (!profile) return;
+    try {
+      const newStatus = !profile.is_available;
+      // Optimistic update
+      setProfile({ ...profile, is_available: newStatus });
+      await updateDonorProfile({ is_available: newStatus });
+      Swal.fire({
+        icon: 'success',
+        title: `You are now ${newStatus ? 'Available' : 'Unavailable'}`,
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 2000
+      });
+    } catch (err) {
+      // Revert on error
+      setProfile({ ...profile, is_available: !profile.is_available });
+      Swal.fire({ icon: 'error', title: 'Failed to update' });
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -288,7 +419,7 @@ const DonorDashboard = () => {
             </div>
           ) : (
             <>
-              {view === 'dashboard' && <DashboardOverview profile={profile} />}
+              {view === 'dashboard' && <DashboardOverview profile={profile} onToggleAvailability={handleToggleAvailability} />}
               {view === 'profile' && <ProfileView profile={profile} onUpdate={fetchProfile} />}
               {view === 'settings' && (
                 <div className="animate-in">
