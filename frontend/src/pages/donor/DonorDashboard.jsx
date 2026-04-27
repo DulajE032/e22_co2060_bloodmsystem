@@ -231,7 +231,7 @@ const DashboardOverview = ({ profile }) => (
       <div className="qr-box">
         {profile?.qr_id ? (
           <QRCodeCanvas 
-            value={profile.qr_id} size={180} level={"H"} includeMargin={true}
+            value={`${window.location.origin}/donor/scan/${profile.qr_id}`} size={180} level={"H"} includeMargin={true}
             imageSettings={{ src: "/favicon.svg", height: 40, width: 40, excavate: true }}
           />
         ) : (

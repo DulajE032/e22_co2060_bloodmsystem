@@ -12,6 +12,7 @@ class DonorProfileSerializer(serializers.ModelSerializer):
     district = serializers.SerializerMethodField()
     hospital = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    is_available = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = DonorDetails
