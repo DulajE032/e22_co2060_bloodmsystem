@@ -27,6 +27,7 @@ import './App.css';
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import DoctorsList from "./pages/admin/DoctorsList.jsx";
 import InventoryPage from "./pages/admin/InventoryPage.jsx";
+import PublicDonorScan from "./pages/donor/publicDonorScan.jsx";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/services" element={<Services />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/donor/scan/:qrId" element={<PublicDonorScan />} />
 
               <Route path="/donor" element={
                 <RoleRoute allowedRoles={['donor', 'admin']}>
