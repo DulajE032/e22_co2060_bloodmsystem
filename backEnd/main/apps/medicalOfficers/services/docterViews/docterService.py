@@ -2,13 +2,11 @@
 
 
 
-from ...serializers.request.docterRequest import Imagechange
-
 from rest_framework import generics, parsers
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 
-
+from ...serializers.request.docterRequest import Imagechange
 
 
 class UpdateDoctorImageView(generics.UpdateAPIView):

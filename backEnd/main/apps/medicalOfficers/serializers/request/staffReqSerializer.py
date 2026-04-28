@@ -1,7 +1,9 @@
 import re
 
 from rest_framework import serializers
+
 from ...models.hospitalStaff import StaffProfile
+
 
 class StaffRequestSerializer(serializers.ModelSerializer):
     class Meta:

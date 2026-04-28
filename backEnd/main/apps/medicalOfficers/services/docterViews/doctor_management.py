@@ -1,13 +1,13 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from ...models.doctor import Doctor
 from ...models.doctor_message import DoctorMessage
-from ...serializers.doctor_serializers import DoctorSerializer, DoctorMessageSerializer
+from ...serializers.doctor_serializers import DoctorSerializer
 
 User = get_user_model()
 
@@ -16,11 +16,11 @@ class DoctorViewSet(viewsets.ModelViewSet):
     ViewSet for Doctor operations
     Provides CRUD operations and custom actions for doctor management
     """
-    
+
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
     permission_classes = [IsAuthenticated] # Or IsAdminUser depending on needs
-    
+
     def get_queryset(self):
         """
         Filter doctors based on query parameters
@@ -28,27 +28,27 @@ class DoctorViewSet(viewsets.ModelViewSet):
         """
         queryset = Doctor.objects.all()
         search_term = self.request.query_params.get('search', None)
-        
+
         if search_term:
             queryset = queryset.filter(
                 Q(id__icontains=search_term) |
                 Q(full_name__icontains=search_term) |
                 Q(email__icontains=search_term)
             )
-        
+
         return queryset
 
-    # Custom actions to match frontend expectations if needed, 
+    # Custom actions to match frontend expectations if needed,
     # but ModelViewSet already provides list, create, retrieve, update, destroy.
-    
+
     @action(detail=True, methods=['post'], url_path='create-credentials')
     def create_credentials(self, request, pk=None):
         doctor = self.get_object()
         password = request.data.get('password')
-        
+
         if not password:
             return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             # Create or get User account
             user, created = User.objects.get_or_create(
@@ -58,20 +58,20 @@ class DoctorViewSet(viewsets.ModelViewSet):
                     'role': User.DOCTOR
                 }
             )
-            
+
             user.set_password(password)
             user.save()
-            
+
             doctor.user = user
             doctor.credentials_created = True
             doctor.save()
-            
+
             return Response({
                 'username': doctor.username,
                 'message': 'Credentials created successfully',
                 'credentials_created': True
             }, status=status.HTTP_201_CREATED)
-        
+
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -79,13 +79,13 @@ class DoctorViewSet(viewsets.ModelViewSet):
     def reset_password(self, request, pk=None):
         doctor = self.get_object()
         new_password = request.data.get('new_password')
-        
+
         if not new_password:
             return Response({'error': 'New password is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if not doctor.user:
             return Response({'error': 'Doctor has no user account'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             doctor.user.set_password(new_password)
             doctor.user.save()
@@ -98,10 +98,10 @@ class DoctorViewSet(viewsets.ModelViewSet):
         doctor = self.get_object()
         subject = request.data.get('subject')
         message = request.data.get('message')
-        
+
         if not subject or not message:
             return Response({'error': 'Subject and message are required'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             DoctorMessage.objects.create(
                 doctor=doctor,

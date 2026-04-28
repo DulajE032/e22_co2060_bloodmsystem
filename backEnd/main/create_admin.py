@@ -1,13 +1,13 @@
 import os
+
 import django
-import sys
 
 # Setup Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
-from django.contrib.auth import get_user_model
 from apps.UserAuth.models import Profile
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 

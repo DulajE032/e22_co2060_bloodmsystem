@@ -5,7 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from ...medicalOfficers.models.hospitalStaff import StaffProfile
-from ...medicalOfficers.serializers.response.StaffResponseSerializer import StaffResponseSerializer
+from ...medicalOfficers.serializers.response.StaffResponseSerializer import (
+	StaffResponseSerializer,
+)
 
 
 class StaffManageApiView(generics.RetrieveUpdateDestroyAPIView):
