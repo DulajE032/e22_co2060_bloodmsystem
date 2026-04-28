@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from ...models.donorDetails import DonorDetails
+
 
 class PublicDonorSerializer(serializers.ModelSerializer):
     donor_name = serializers.CharField(source="user.get_full_name", read_only=True)

@@ -1,5 +1,6 @@
-from django.urls import path
 from apps.medicalOfficers.services.docterViews.doctor_management import DoctorViewSet
+from django.urls import path
+
 from .serviceses.staffService import StaffList, StaffManageApiView, getTotalStaff
 
 # Map DoctorViewSet to specific paths for frontend compatibility
@@ -24,7 +25,7 @@ urlpatterns = [
     path("doctors/<int:pk>/reset-password/", doctor_reset_password, name="doctor_reset_password"),
     path("doctors/<int:pk>/send-message/", doctor_message, name="doctor_message"),
     path("doctor/total/", doctor_stats, name="doctor_total"),
-    
+
     # Staff Management
     path("staff/profile/<int:id>/", StaffManageApiView.as_view(), name="staff_profile_manage"),
     path("staff/list/", StaffList.as_view(), name="staff_list"),

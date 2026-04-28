@@ -1,7 +1,7 @@
 
 from django.db import models
-from .bloodBank import BloodBank
 
+from .bloodBank import BloodBank
 
 
 class BloodInventory(models.Model):

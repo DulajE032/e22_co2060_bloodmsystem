@@ -3,8 +3,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from ...selectors.inventory_read_selector import get_available_units_grouped_by_blood_type
-from ...serializers.response.inventoryResponseserializer import LiveStockResponseSerializer
+from ...selectors.inventory_read_selector import (
+    get_available_units_grouped_by_blood_type,
+)
+from ...serializers.response.inventoryResponseserializer import (
+    LiveStockResponseSerializer,
+)
 
 BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
 

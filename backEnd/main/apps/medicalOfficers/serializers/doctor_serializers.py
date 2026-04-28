@@ -1,10 +1,12 @@
 from rest_framework import serializers
+
 from ..models.doctor import Doctor
 from ..models.doctor_message import DoctorMessage
 
+
 class DoctorSerializer(serializers.ModelSerializer):
     """Serializer for Doctor model - converts model to JSON"""
-    
+
     class Meta:
         model = Doctor
         fields = [
@@ -40,13 +42,13 @@ class DoctorSerializer(serializers.ModelSerializer):
                 'required': True
             }
         }
-    
+
     def validate_email(self, value):
         """Validate email is unique"""
         if Doctor.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email already exists")
         return value
-    
+
     def validate_username(self, value):
         """Validate username is unique"""
         if Doctor.objects.filter(username=value).exists():
@@ -56,7 +58,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 class DoctorMessageSerializer(serializers.ModelSerializer):
     """Serializer for DoctorMessage model"""
-    
+
     class Meta:
         model = DoctorMessage
         fields = ['id', 'doctor', 'subject', 'message', 'is_read', 'created_at']

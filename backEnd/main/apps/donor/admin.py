@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from .models.donorDetails import DonorDetails
+
 
 @admin.register(DonorDetails)
 class DonorAdmin(admin.ModelAdmin):
