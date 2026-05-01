@@ -16,7 +16,7 @@ const DoctorDashboard = () => {
     const [profileData, setProfileData] = useState(null);
 
     // Replace with your actual backend base URL if it's different
-    const API_BASE = "http://localhost:8000/api/v1/users"; 
+    const API_BASE = "http://localhost:8000/api/v1/users";
 
     useEffect(() => {
         if (user && user.user_id) {
@@ -102,7 +102,7 @@ const DoctorDashboard = () => {
     };
 
     const renderContent = () => {
-        switch(activeTab) {
+        switch (activeTab) {
             case 'request':
                 return (
                     <div className="card fade-in">
@@ -179,27 +179,27 @@ const DoctorDashboard = () => {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><strong>John Doe</strong><br/><span style={{fontSize: '12px', color: '#666'}}>PT-84930</span></td>
+                                        <td><strong>John Doe</strong><br /><span style={{ fontSize: '12px', color: '#666' }}>PT-84930</span></td>
                                         <td>A+</td>
                                         <td>2</td>
                                         <td>Urgent</td>
-                                        <td><span className="badge warning"><Clock size={12} style={{marginRight: '4px', display: 'inline'}} /> Pending</span></td>
+                                        <td><span className="badge warning"><Clock size={12} style={{ marginRight: '4px', display: 'inline' }} /> Pending</span></td>
                                         <td><button className="btn btn-outline text-xs">View/Edit</button></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Maria Garcia</strong><br/><span style={{fontSize: '12px', color: '#666'}}>PT-11293</span></td>
+                                        <td><strong>Maria Garcia</strong><br /><span style={{ fontSize: '12px', color: '#666' }}>PT-11293</span></td>
                                         <td>O-</td>
                                         <td>4</td>
                                         <td>Critical</td>
-                                        <td><span className="badge safe"><CheckCircle size={12} style={{marginRight: '4px', display: 'inline'}} /> Approved</span></td>
+                                        <td><span className="badge safe"><CheckCircle size={12} style={{ marginRight: '4px', display: 'inline' }} /> Approved</span></td>
                                         <td><button className="btn btn-primary text-xs">Acknowledge</button></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Robert Smith</strong><br/><span style={{fontSize: '12px', color: '#666'}}>PT-33211</span></td>
+                                        <td><strong>Robert Smith</strong><br /><span style={{ fontSize: '12px', color: '#666' }}>PT-33211</span></td>
                                         <td>AB+</td>
                                         <td>1</td>
                                         <td>Normal</td>
-                                        <td><span className="badge critical"><XCircle size={12} style={{marginRight: '4px', display: 'inline'}} /> Rejected</span></td>
+                                        <td><span className="badge critical"><XCircle size={12} style={{ marginRight: '4px', display: 'inline' }} /> Rejected</span></td>
                                         <td><button className="btn btn-outline text-xs">View Reason</button></td>
                                     </tr>
                                 </tbody>
