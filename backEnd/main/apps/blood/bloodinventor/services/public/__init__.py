@@ -1,2 +1,0 @@
-# Public inventory service views.
-
