@@ -2,6 +2,7 @@ from apps.medicalOfficers.services.docterViews.doctor_management import DoctorVi
 from django.urls import path
 
 from .serviceses.staffService import StaffList, StaffManageApiView, getTotalStaff
+from .serviceses import adminDashboardService
 
 # Map DoctorViewSet to specific paths for frontend compatibility
 doctor_list = DoctorViewSet.as_view({'get': 'list'})
@@ -30,4 +31,8 @@ urlpatterns = [
     path("staff/profile/<int:id>/", StaffManageApiView.as_view(), name="staff_profile_manage"),
     path("staff/list/", StaffList.as_view(), name="staff_list"),
     path("staff/total/", getTotalStaff, name="staff_total"),
+    # Admin Dashboard specific data
+    path("stats/", adminDashboardService.get_admin_dashboard_stats, name="admin_stats"),
+    path("donors/", adminDashboardService.get_admin_donors, name="admin_donors"),
+    path("camps/", adminDashboardService.get_admin_camps, name="admin_camps"),
 ]
