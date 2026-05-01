@@ -1,12 +1,12 @@
 from rest_framework import serializers
+
 from ..models.bloodCamp import BloodCamp
 from ..models.campRegistration import CampRegistration
-from ..models.donorDetails import DonorDetails
 
 
 class BloodCampSerializer(serializers.ModelSerializer):
     """Serializer for Blood Camps. Read-only for donors, read-write for organizers."""
-    
+
     organizer_name = serializers.CharField(source="organizer.username", read_only=True)
 
     class Meta:
@@ -28,7 +28,7 @@ class BloodCampSerializer(serializers.ModelSerializer):
 
 class CampRegistrationSerializer(serializers.ModelSerializer):
     """Serializer for Camp Registrations. Read-only for donors, read-write (status/time) for organizers."""
-    
+
     donor_name = serializers.SerializerMethodField()
     donor_blood_group = serializers.SerializerMethodField()
     donor_phone = serializers.SerializerMethodField()

@@ -6,6 +6,7 @@ urlpatterns = [
     path("public/", include("apps.blood.bloodinventor.urls.public_urls")),
     path("officer/", include("apps.blood.bloodinventor.urls.officer_urls")),
     path("admin/", include("apps.blood.bloodinventor.urls.admin_urls")),
+    path("doctor/", include("apps.blood.bloodinventor.urls.doctor_urls")),
     # Backward-compatible alias used by existing frontend.
     path("live-stock/", live_stock, name="live_stock"),
 ]

@@ -9,6 +9,7 @@ class BloodRequest(models.Model):
         PENDING = "PENDING", "Pending"
         VERIFIED = "VERIFIED", "Verified"
         APPROVED = "APPROVED", "Approved"
+        IN_PROGRESS = "IN_PROGRESS", "In Progress"
         REJECTED = "REJECTED", "Rejected"
         FULFILLED = "FULFILLED", "Fulfilled"
         CANCELLED = "CANCELLED", "Cancelled"
@@ -18,6 +19,7 @@ class BloodRequest(models.Model):
     units_requested = models.PositiveIntegerField()
     units_approved = models.PositiveIntegerField(default=0)
     reason = models.TextField(blank=True)
+    priority_level = models.CharField(max_length=20, default="NORMAL") # e.g. NORMAL, HIGH, CRITICAL
     urgency = models.CharField(max_length=20, default="NORMAL")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
 

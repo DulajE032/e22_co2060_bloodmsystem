@@ -3,8 +3,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
-from ..models.donorDetails import DonorDetails
 from ..models.donationHistory import DonationHistory
+from ..models.donorDetails import DonorDetails
 from ..serializers.donationHistory import DonationHistorySerializer
 
 
