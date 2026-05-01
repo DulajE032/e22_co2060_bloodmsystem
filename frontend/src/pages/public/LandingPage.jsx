@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Activity, MapPin, Search, PhoneCall, ArrowRight, Shield, Clock, ChevronDown } from 'lucide-react';
+import { Heart, Activity, MapPin, Search, PhoneCall, ArrowRight, Shield, Clock, ChevronDown, Calendar } from 'lucide-react';
 import './LandingPage.css';
 import { LANDING } from '../../config/imageAssets';
 
 import video1 from '../../assets/backgroundvideos/video01.mp4';
 import video2 from '../../assets/backgroundvideos/video02.mp4';
+
+import { getLatestPublicCamp } from '../../services/campService';
 
 const LandingPage = () => {
 const DEFAULT_STOCK = {
@@ -23,6 +25,7 @@ const [bloodStock, setBloodStock] = useState(DEFAULT_STOCK);
 const [lastUpdated, setLastUpdated] = useState(null);
 const [stockLoading, setStockLoading] = useState(true);
 const [stockError, setStockError] = useState("");
+const [latestCamp, setLatestCamp] = useState(null);
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 
@@ -53,8 +56,18 @@ const fetchLiveStock = async () => {
     }
 };
 
+const fetchLatestCamp = async () => {
+    try {
+        const camp = await getLatestPublicCamp();
+        setLatestCamp(camp || null);
+    } catch (error) {
+        console.error("Error fetching latest camp:", error);
+    }
+};
+
 useEffect(() => {
     fetchLiveStock();
+    fetchLatestCamp();
     const intervalId = setInterval(fetchLiveStock, 60000); // refresh every 60s
     return () => clearInterval(intervalId);
 }, []);
@@ -148,7 +161,7 @@ useEffect(() => {
                                         <p>Join our community of lifesavers. Register today to seamlessly book your donation appointments.</p>
                                     </div>
                                     <div className="service-read-more">
-                                        <Link to="/donor/register">Register Now</Link>
+                                        <Link to="/signup">Register Now</Link>
                                     </div>
                                 </div>
                             </div>
@@ -179,10 +192,18 @@ useEffect(() => {
                                             <Activity size={36} color="white" />
                                         </div>
                                         <h3 className="service-box-title">Blood Camp Details</h3>
-                                        <p>Donating has never been easier. Use our interactive map to discover upcoming blood donation drives hosted in your city.</p>
+                                        {latestCamp ? (
+                                            <div className="latest-camp-info">
+                                                <p className="camp-name-highlight">{latestCamp.title}</p>
+                                                <p className="camp-meta"><MapPin size={12} /> {latestCamp.location}</p>
+                                                <p className="camp-meta"><Calendar size={12} /> {new Date(latestCamp.date).toLocaleDateString()}</p>
+                                            </div>
+                                        ) : (
+                                            <p>Donating has never been easier. Use our interactive map to discover upcoming blood donation drives hosted in your city.</p>
+                                        )}
                                     </div>
                                     <div className="service-read-more">
-                                        <Link to="/donor">View Camps</Link>
+                                        <Link to="/blood-camps">View Camps</Link>
                                     </div>
                                 </div>
                             </div>

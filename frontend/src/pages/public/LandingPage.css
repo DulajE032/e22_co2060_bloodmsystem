@@ -314,103 +314,157 @@
 
 .service-card-wrapper {
     background: #ffffff;
-    box-shadow: 0px 0px 40px 0px rgba(0, 0, 0, 0.08);
-    border-radius: var(--radius-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 0 15px rgba(198, 40, 40, 0.05);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     height: 100%;
-    margin-top: 40px;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(198, 40, 40, 0.05);
 }
 
 .service-card-wrapper:hover {
-    transform: translateY(-10px);
-    box-shadow: 0px 10px 50px 0px rgba(128, 128, 128, 0.3);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(198, 40, 40, 0.15), 0 0 20px rgba(198, 40, 40, 0.1);
+    border-color: rgba(198, 40, 40, 0.2);
 }
 
 .service-img-box {
     width: 100%;
-    height: 220px;
+    height: 160px;
     overflow: hidden;
+    position: relative;
+}
+
+.service-img-box::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
 }
 
 .service-img-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.6s ease;
 }
 
 .service-card-wrapper:hover .service-img-box img {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .service-content-main-box {
-    padding: 0 15px 30px 15px;
+    padding: 0 20px 25px 20px;
     text-align: center;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Hover effects for inner elements */
 .service-icon-box {
-    width: 80px;
-    height: 80px;
-    margin: -40px auto 20px auto;
-    border-radius: var(--radius-md);
+    width: 60px;
+    height: 60px;
+    margin: -30px auto 15px auto;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 8px 16px rgba(198, 40, 40, 0.2);
+    transition: all 0.3s ease;
     position: relative;
     z-index: 2;
 }
 
+.service-icon-box svg {
+    width: 28px;
+    height: 28px;
+}
+
 .bg-red {
-    background-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary), #d32f2f);
 }
 
 .bg-dark {
-    background-color: #1a2429;
+    background: linear-gradient(135deg, #2d3436, #1a2429);
 }
 
-.service-card-wrapper:hover .service-icon-box.bg-dark {
-    background-color: var(--color-primary);
+.service-card-wrapper:hover .service-icon-box {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, var(--color-primary), #b71c1c);
 }
 
 .service-box-title {
     color: #1a2429;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+}
+
+.service-card-wrapper:hover .service-box-title {
+    color: var(--color-primary);
 }
 
 .service-content-main-box p {
     color: var(--color-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .service-read-more {
-    background-color: #1a2429;
-    text-align: center;
-    padding: 15px;
-    transition: background-color 0.3s ease;
+    padding: 0 20px 20px 20px;
+    background: transparent;
 }
 
 .service-read-more a {
-    color: white;
+    color: var(--color-primary);
     font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(198, 40, 40, 0.05);
+    transition: all 0.3s ease;
     width: 100%;
 }
 
-.service-card-wrapper:hover .service-read-more {
-    background-color: var(--color-primary);
+.latest-camp-info {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.camp-name-highlight {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px !important;
+}
+
+.camp-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 4px !important;
+}
+
+.camp-meta svg {
+    color: var(--color-primary);
 }
 
 /* Live Stock Mockup */

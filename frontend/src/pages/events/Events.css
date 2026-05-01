@@ -168,86 +168,97 @@
 
 /* ── Event Card Wrapper (Complete Structure) ── */
 .event-service-card-wrapper {
-    background: white;
-    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 0 15px rgba(198, 40, 40, 0.05);
+    border-radius: var(--radius-lg, 14px);
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(198, 40, 40, 0.05);
     position: relative;
 }
 
 .event-service-card-wrapper:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-.event-card-inner {
-    /* extra top margin so icon "floats" above card */
-
+    box-shadow: 0 12px 30px rgba(198, 40, 40, 0.15), 0 0 20px rgba(198, 40, 40, 0.1);
+    border-color: rgba(198, 40, 40, 0.2);
 }
 
 /* ── Image Box ── */
 .event-service-img-box {
     width: 100%;
-    height: 240px;
+    height: 180px;
     position: relative;
+    overflow: hidden;
+}
+
+.event-service-img-box::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
+    z-index: 1;
+}
+
+[data-theme="dark"] .event-service-img-box::after {
+    background: linear-gradient(to top, #161b22, transparent);
 }
 
 .event-service-img-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px 12px 0 0;
+    transition: transform 0.6s ease;
     display: block;
-    clip-path: inset(0 0 0 0);
 }
 
 .event-service-card-wrapper:hover .event-service-img-box img {
-    transform: scale(1.08);
+    transform: scale(1.1);
 }
 
-/* ── Icon Box (Floating Badge - Half in Image, Half Below) ── */
+/* ── Icon Box (Modern SaaS - Negative Margin Logic) ── */
 .event-service-icon-box {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 50%);
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    margin: -30px auto 15px auto;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px rgba(198, 40, 40, 0.2);
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
 .event-bg-dark {
-    background: #1a2429;
+    background: linear-gradient(135deg, #2d3436, #1a2429);
     color: white;
 }
 
-.event-service-card-wrapper:hover .event-service-icon-box {
-    transform: translate(-50%, 50%) scale(1.05);
-    background: var(--color-primary, #b71c1c);
+.event-service-icon-box svg {
+    width: 28px;
+    height: 28px;
 }
 
-.event-service-card-wrapper:hover .event-bg-dark {
-    background: var(--color-primary, #b71c1c);
+.event-service-card-wrapper:hover .event-service-icon-box {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, var(--color-primary), #b71c1c);
 }
 
 /* ── Content Box ── */
 .event-service-content-main-box {
-    padding: 3rem 2rem 2rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
     text-align: center;
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
     position: relative;
 }
@@ -255,66 +266,76 @@
 /* Label Badge */
 .event-contact-card-label {
     display: inline-block;
-    background: rgba(183, 28, 28, 0.1);
-    color: #b71c1c;
-    font-size: 0.75rem;
-    font-weight: 700;
+    background: rgba(198, 40, 40, 0.08);
+    color: var(--color-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 50px;
-    margin: 0 auto 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(198, 40, 40, 0.1);
 }
 
 /* Title */
 .event-service-box-title {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-secondary, #1a202c);
-    line-height: 1.4;
+    color: #1a2429;
+    line-height: 1.3;
     margin: 0;
+    transition: color 0.3s ease;
+}
+
+.event-service-card-wrapper:hover .event-service-box-title {
+    color: var(--color-primary);
 }
 
 /* Detail Text (Date/Time) */
 .event-contact-card-detail {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-secondary, #1a202c);
-    margin: 0.3rem 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0.2rem 0;
 }
 
 /* Sub Text (Description) */
 .event-contact-card-sub {
-    font-size: 0.88rem;
-    color: var(--color-text-muted, #6b7280);
-    line-height: 1.6;
-    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-top: 0.2rem;
 }
 
 /* ── Read More / CTA Button ── */
 .event-service-read-more {
-    background-color: #1a2429;;
-    padding: 1rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    background: transparent;
     text-align: center;
-    transition: all 0.3s ease;
     margin-top: auto;
 }
 
-.event-service-card-wrapper:hover .event-service-read-more {
-    background-color: var(--color-primary, #b71c1c);
-}
-
 .event-service-read-more a {
-    color: white;
+    color: var(--color-primary);
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     letter-spacing: 0.5px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(198, 40, 40, 0.05);
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 .event-service-card-wrapper:hover .event-service-read-more a {
+    background: var(--color-primary);
     color: white;
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
 }
 
 /* ── Newsletter Section ─────────────────────────── */

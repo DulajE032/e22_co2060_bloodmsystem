@@ -76,6 +76,15 @@ const ROLE_CONFIG = {
             { path: '/donor',   label: 'Donor',  icon: 'User' },
         ],
     },
+
+    bloodcamp: {
+        label: 'Blood Camp Organizer',
+        dashboard: '/bloodcamp',
+        allowedRoutes: ['/bloodcamp', '/events'],
+        navItems: [
+            { path: '/bloodcamp', label: 'Camp', icon: 'Calendar' },
+        ],
+    },
 };
 
 /* ── Public pages visible to ALL users (logged-in or not) ── */
@@ -93,7 +102,6 @@ export const PUBLIC_ROUTES = ['/', '/login', '/signup', '/contact', '/events', '
 /* ── Role options for the signup form ── */
 export const ROLE_OPTIONS = [
     { value: 'donor', label: 'Donor' },
-
 ];
 
 /**

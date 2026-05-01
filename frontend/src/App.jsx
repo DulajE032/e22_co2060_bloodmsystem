@@ -31,6 +31,8 @@ import DoctorsList from "./pages/admin/DoctorsList.jsx";
 import InventoryPage from "./pages/admin/InventoryPage.jsx";
 import PublicDonorScan from "./pages/donor/publicDonorScan.jsx";
 
+import BloodCamps from './pages/bloodcamp/BloodCamps';
+
 function App() {
   return (
     <ThemeProvider>
@@ -50,6 +52,7 @@ function App() {
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/services" element={<Services />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/blood-camps" element={<BloodCamps />} />
               <Route path="/donor/scan/:qrId" element={<PublicDonorScan />} />
 
               <Route path="/donor" element={
@@ -62,11 +65,7 @@ function App() {
                   <DonorNotifications />
                 </RoleRoute>
               } />
-              <Route path="/donor/eligibility" element={
-                <RoleRoute allowedRoles={['donor', 'admin']}>
-                  <DonorEligibility />
-                </RoleRoute>
-              } />
+              <Route path="/donor/eligibility" element={<DonorEligibility />} />
               <Route path="/donor/register" element={
                 <RoleRoute allowedRoles={['donor', 'admin']}>
                   <DonorRegistration />

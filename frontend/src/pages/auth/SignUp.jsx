@@ -259,7 +259,7 @@ const SignUp = () => {
             const payload = {
                 username: formData.username,
                 email: formData.email,
-                role: formData.role || 'patient',
+                role: formData.role || 'donor',
                 password: formData.password,
                 password2: formData.confirmPassword,
                 profile: {
