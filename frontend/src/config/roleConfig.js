@@ -76,6 +76,15 @@ const ROLE_CONFIG = {
             { path: '/donor',   label: 'Donor',  icon: 'User' },
         ],
     },
+
+    Inventor: {
+        label: 'Inventory Admin',
+        dashboard: '/inventory',
+        allowedRoutes: ['/inventory', '/events'],
+        navItems: [
+            { path: '/inventory', label: 'Inventory', icon: 'ClipboardList' },
+        ],
+    },
 };
 
 /* ── Public pages visible to ALL users (logged-in or not) ── */

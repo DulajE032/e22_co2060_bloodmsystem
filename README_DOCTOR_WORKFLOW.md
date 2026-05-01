@@ -19,7 +19,11 @@ Welcome to the new fully integrated workflow connecting Doctors, the Inventory S
      - General Eligibility (No donation in the last 90 days).
      - Cooldown limit (`last_alerted_at` must be > 24 hours ago).
    - Alerts are capped at **30 donors** to prevent spamming.
-4. **Fulfillment (`IN_PROGRESS` -> `FULFILLED`)**
+4. **Fulfillment (Inventory Dashboard)**
+   - The Inventory Admin logs into the **Blood Bank Dashboard** (`StaffDashboard`).
+   - The Admin navigates to the **Doctor Requests** tab to view all incoming requests in real-time.
+   - The Admin can **Approve** the request (allocating units) or **Reject** it (providing a mandatory reason).
+   - Once approved or rejected, the Doctor sees the updated status and notes immediately on their dashboard.
    - The request transitions to `IN_PROGRESS` as donors donate or inventory is transported.
    - Once complete, it is marked as `FULFILLED` (or `COMPLETED`).
 
