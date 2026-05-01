@@ -23,4 +23,77 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let refreshQueue = [];
+
+const flushRefreshQueue = (newAccessToken) => {
+  refreshQueue.forEach((callback) => callback(newAccessToken));
+  refreshQueue = [];
+};
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest?._retry) {
+      const storedTokens = localStorage.getItem('authTokens');
+      if (!storedTokens) return Promise.reject(error);
+
+      let tokens;
+      try {
+        tokens = JSON.parse(storedTokens);
+      } catch {
+        localStorage.removeItem('authTokens');
+        return Promise.reject(error);
+      }
+
+      if (!tokens?.refresh) {
+        localStorage.removeItem('authTokens');
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          refreshQueue.push((newAccessToken) => {
+            if (!newAccessToken) return reject(error);
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await axios.post(
+          `${api.defaults.baseURL}auth/token/refresh/`,
+          { refresh: tokens.refresh }
+        );
+
+        const refreshedTokens = {
+          ...tokens,
+          access: refreshResponse.data.access,
+          refresh: refreshResponse.data.refresh ?? tokens.refresh,
+        };
+
+        localStorage.setItem('authTokens', JSON.stringify(refreshedTokens));
+        isRefreshing = false;
+        flushRefreshQueue(refreshedTokens.access);
+
+        originalRequest.headers.Authorization = `Bearer ${refreshedTokens.access}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        isRefreshing = false;
+        flushRefreshQueue(null);
+        localStorage.removeItem('authTokens');
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

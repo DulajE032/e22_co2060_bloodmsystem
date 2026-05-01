@@ -4,29 +4,39 @@ import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { AuthContext } from './auth/AuthContext';
 
+const normalizeRole = (role) => {
+    if (!role) return null;
+    const normalized = role.toString().trim().toLowerCase();
+    if (normalized === 'blood donor' || normalized === 'blood_donor') return 'donor';
+    if (normalized === 'blood camp organizer' || normalized === 'bloodcamp organizer') return 'bloodcamp';
+    if (normalized === 'admindashboard') return 'admin';
+    if (normalized === 'medicalofficer') return 'medical_officer';
+    if (normalized === 'inventory' || normalized === 'inventor') return 'inventor';
+    return normalized;
+};
+
+const readStoredTokens = () => {
+    const storedTokens = localStorage.getItem('authTokens');
+    if (!storedTokens) return { tokens: null, user: null };
+
+    try {
+        const tokens = JSON.parse(storedTokens);
+        if (!tokens?.access) return { tokens: null, user: null };
+        const decoded = jwtDecode(tokens.access);
+        return { tokens, user: { ...decoded, role: normalizeRole(decoded?.role) } };
+    } catch {
+        localStorage.removeItem('authTokens');
+        return { tokens: null, user: null };
+    }
+};
+
 export const AuthProvider = ({ children }) => {
-    const [authTokens, setAuthTokens] = useState(() => {
-        const storedTokens = localStorage.getItem('authTokens');
-        return storedTokens ? JSON.parse(storedTokens) : null;
-    });
+    const initialAuth = readStoredTokens();
 
-    const [user, setUser] = useState(() => {
-        const storedTokens = localStorage.getItem('authTokens');
-        if (!storedTokens) {
-            return null;
-        }
-
-        try {
-            const tokens = JSON.parse(storedTokens);
-            return tokens?.access ? jwtDecode(tokens.access) : null;
-        } catch {
-            localStorage.removeItem('authTokens');
-            return null;
-        }
-    });
-
+    const [authTokens, setAuthTokens] = useState(initialAuth.tokens);
+    const [user, setUser] = useState(initialAuth.user);
     const [isAuthenticated, setIsAuthenticated] = useState(
-        () => Boolean(localStorage.getItem('authTokens')),
+        () => Boolean(initialAuth.tokens && initialAuth.user),
     );
 
     const [loading] = useState(false);
@@ -38,11 +48,12 @@ export const AuthProvider = ({ children }) => {
         });
 
         const tokens = response.data;
-        const userData = jwtDecode(tokens.access);
+        const decoded = jwtDecode(tokens.access);
+        const userData = { ...decoded, role: normalizeRole(decoded?.role) };
 
         setAuthTokens(tokens);
         setUser(userData);
-        setIsAuthenticated(true);
+        setIsAuthenticated(Boolean(tokens && userData));
         localStorage.setItem('authTokens', JSON.stringify(tokens));
 
         return userData;
