@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import ListAPIView, ListCreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView, ListCreateAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,6 +28,25 @@ class UpcomingBloodCampsView(ListAPIView):
 
     def get_queryset(self):
         return BloodCamp.objects.filter(status="Upcoming")
+
+
+class LatestPublicBloodCampView(APIView):
+    """
+    GET /api/v1/camps/public/latest/
+    Returns the latest upcoming blood camp for public users.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        latest_camp = (
+            BloodCamp.objects.filter(status="Upcoming")
+            .order_by("-created_at")
+            .first()
+        )
+        if not latest_camp:
+            return Response(None, status=status.HTTP_200_OK)
+        serializer = BloodCampSerializer(latest_camp, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class OrganizerBloodCampView(ListCreateAPIView):

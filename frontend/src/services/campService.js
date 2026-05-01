@@ -5,6 +5,11 @@ export const getUpcomingCamps = async () => {
   return response.data;
 };
 
+export const getLatestPublicCamp = async () => {
+  const response = await api.get('donor/camps/public/latest/');
+  return response.data;
+};
+
 export const registerForCamp = async (campId) => {
   const response = await api.post(`donor/camps/${campId}/register/`);
   return response.data;

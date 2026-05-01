@@ -1,10 +1,8 @@
-
 from django.urls import path
 
 from ..services.bloodCampService import (
-    ApproveCampRegistrationView,
-    CampRegistrationsView,
-    CompleteCampRegistrationView,
+    UpcomingBloodCampsView,
+    LatestPublicBloodCampView,
     OrganizerBloodCampView,
     RegisterForCampView,
     UpcomingBloodCampsView,
@@ -25,6 +23,7 @@ urlpatterns = [
 
     # Blood Camp Routes
     path('camps/upcoming/', UpcomingBloodCampsView.as_view(), name='upcoming-camps'),
+    path('camps/public/latest/', LatestPublicBloodCampView.as_view(), name='public-latest-camp'),
     path('camps/', OrganizerBloodCampView.as_view(), name='organizer-camps'),
     path('camps/<int:pk>/register/', RegisterForCampView.as_view(), name='register-camp'),
     path('camps/<int:pk>/registrations/', CampRegistrationsView.as_view(), name='camp-registrations'),

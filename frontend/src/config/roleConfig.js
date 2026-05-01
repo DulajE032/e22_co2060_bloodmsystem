@@ -77,12 +77,12 @@ const ROLE_CONFIG = {
         ],
     },
 
-    Inventor: {
-        label: 'Inventory Admin',
-        dashboard: '/inventory',
-        allowedRoutes: ['/inventory', '/events'],
+    bloodcamp: {
+        label: 'Blood Camp Organizer',
+        dashboard: '/bloodcamp',
+        allowedRoutes: ['/bloodcamp', '/events'],
         navItems: [
-            { path: '/inventory', label: 'Inventory', icon: 'ClipboardList' },
+            { path: '/bloodcamp', label: 'Camp', icon: 'Calendar' },
         ],
     },
 };
@@ -102,7 +102,6 @@ export const PUBLIC_ROUTES = ['/', '/login', '/signup', '/contact', '/events', '
 /* ── Role options for the signup form ── */
 export const ROLE_OPTIONS = [
     { value: 'donor', label: 'Donor' },
-
 ];
 
 /**

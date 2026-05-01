@@ -75,7 +75,7 @@ class RegisterView(generics.CreateAPIView):
         # Generate tokens for the newly registered user
         refresh = RefreshToken.for_user(user)
 
-        if user.role !="donor":
+        if user.role not in ["donor", "bloodcamp"]:
             return Response(
                 {
                     "error":"invalid "

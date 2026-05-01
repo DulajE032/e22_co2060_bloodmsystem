@@ -205,15 +205,14 @@ const Events = () => {
                                 style={{ transitionDelay: `${i * 0.15}s` }}
                             >
                                 {/* Event Card Structure */}
-                                <div className="event-service-card-wrapper event-card-inner">
+                                <div className="event-service-card-wrapper">
                                     <div className="event-service-img-box">
                                         <img src={card.image} alt={card.label} />
-                                        {/* Icon positioned half in image, half below */}
+                                    </div>
+                                    <div className="event-service-content-main-box">
                                         <div className="event-service-icon-box event-bg-dark">
                                             {card.icon}
                                         </div>
-                                    </div>
-                                    <div className="event-service-content-main-box">
                                         <p className="event-contact-card-label">{card.label}</p>
                                         <h3 className="event-service-box-title">{card.title}</h3>
                                         <p className="event-contact-card-detail">{card.detail}</p>
