@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from ..models.donorAlert import DonorAlert
 from ..models.donorDetails import DonorDetails
-from ..serializers.donorAlert import DonorAlertSerializer, DonorAlertMarkReadSerializer
+from ..serializers.donorAlert import DonorAlertMarkReadSerializer, DonorAlertSerializer
 
 
 class DonorAlertListView(ListAPIView):

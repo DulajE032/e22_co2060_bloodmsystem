@@ -1,151 +1,195 @@
-import React, { useState } from 'react';
-import { PackagePlus, AlertTriangle, Clock, ListChecks, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { 
+    PackagePlus, AlertTriangle, ListChecks, Activity, 
+    Stethoscope, Clock, CheckCircle, XCircle 
+} from 'lucide-react';
 import Swal from 'sweetalert2';
-import './StaffDashboard.css';
+import './StaffDashboard.scss';
+import { getBloodStock } from '../../api/inventoryService';
+import { 
+    getAllBloodRequests, 
+    updateBloodRequestStatus, 
+    getInventoryChanges,
+    createInventoryChange 
+} from '../../api/adminInventoryService';
 
 const StaffDashboard = () => {
-    const [inventory, setInventory] = useState([
-        { id: 'PKT-8492', type: 'O+', collectedDate: '2023-11-20', status: 'Safe', daysLeft: 25 },
-        { id: 'PKT-8493', type: 'A-', collectedDate: '2023-10-15', status: 'Expiring Soon', daysLeft: 4 },
-        { id: 'PKT-8494', type: 'B+', collectedDate: '2023-11-25', status: 'Safe', daysLeft: 30 },
-        { id: 'PKT-8495', type: 'AB+', collectedDate: '2023-10-10', status: 'Critical', daysLeft: 1 },
-    ]);
+    const [activeTab, setActiveTab] = useState('requests');
+    const [inventory, setInventory] = useState({});
+    const [requests, setRequests] = useState([]);
+    const [changes, setChanges] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        setLoading(true);
+        // Fetch Blood Stock
+        const invRes = await getBloodStock();
+        if (invRes.success) setInventory(invRes.data);
+
+        // Fetch Doctor Blood Requests
+        const reqRes = await getAllBloodRequests();
+        if (reqRes.success) setRequests(reqRes.data);
+
+        // Fetch pending changes (if any)
+        const changesRes = await getInventoryChanges();
+        if (changesRes.success) setChanges(changesRes.data);
+
+        setLoading(false);
+    };
 
     const handleAddPacket = () => {
         Swal.fire({
             title: 'Add New Blood Packet',
             html: `
-                <input id="swal-type" class="swal2-input" placeholder="Blood Type (e.g. O+)">
-                <input id="swal-id" class="swal2-input" placeholder="Packet ID">
+                <select id="swal-type" class="swal2-select" style="display: flex; width: 100%;">
+                    <option value="" disabled selected>Select Blood Group</option>
+                    <option value="A+">A+</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B-">B-</option>
+                    <option value="O+">O+</option><option value="O-">O-</option>
+                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                </select>
+                <input id="swal-units" type="number" min="1" class="swal2-input" placeholder="Number of Units" style="display: flex; width: 100%;">
             `,
             focusConfirm: false,
             showCancelButton: true,
-            confirmButtonColor: '#C62828',
-            confirmButtonText: 'Record Packet',
+            confirmButtonColor: '#1976d2',
+            confirmButtonText: 'Submit Request',
             preConfirm: () => {
                 const type = document.getElementById('swal-type').value;
-                const id = document.getElementById('swal-id').value;
-                if (!type || !id) {
-                    Swal.showValidationMessage('Please enter both Type and ID');
+                const units = document.getElementById('swal-units').value;
+                if (!type || !units) {
+                    Swal.showValidationMessage('Please enter both Type and Units');
                 }
-                return { type, id }
+                return { type, units: parseInt(units) }
             }
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                const newPacket = {
-                    id: result.value.id,
-                    type: result.value.type.toUpperCase(),
-                    collectedDate: new Date().toISOString().split('T')[0],
-                    status: 'Safe',
-                    daysLeft: 35
+                const data = {
+                    action: "ADD",
+                    blood_type: result.value.type,
+                    quantity_delta: result.value.units,
+                    reason: "Routine collection"
                 };
-                setInventory([newPacket, ...inventory]);
-
-                Swal.fire({
-                    title: 'Packet Logged!',
-                    text: `Packet ${result.value.id} added to inventory.`,
-                    icon: 'success',
-                    timer: 2000
-                });
+                
+                const res = await createInventoryChange(data);
+                if (res.success) {
+                    Swal.fire('Added!', 'Packet added to pending inventory approval queue.', 'success');
+                    fetchData();
+                } else {
+                    Swal.fire('Error', res.error.detail || 'Could not add packet', 'error');
+                }
             }
         });
     };
 
-    const handleIssuePacket = (id) => {
+    const handleApproveRequest = (id, requestedUnits) => {
         Swal.fire({
-            title: 'Verify Issuance',
-            text: `Are you sure you want to issue packet ${id}? This action cannot be reversed.`,
-            icon: 'warning',
+            title: 'Approve Request',
+            html: `
+                <label>Units to Approve (Requested: ${requestedUnits})</label>
+                <input id="swal-units-app" type="number" value="${requestedUnits}" class="swal2-input" style="display: flex; width: 100%;">
+                <label>Approval Note (Optional)</label>
+                <input id="swal-note-app" type="text" class="swal2-input" placeholder="e.g. Dispatched via cooler" style="display: flex; width: 100%;">
+            `,
             showCancelButton: true,
-            confirmButtonColor: '#2E7D32',
-            cancelButtonColor: '#637381',
-            confirmButtonText: 'Verify & Issue'
-        }).then((result) => {
+            confirmButtonColor: '#2e7d32',
+            confirmButtonText: 'Approve & Allocate',
+            preConfirm: () => {
+                return {
+                    status: 'APPROVED',
+                    units_approved: parseInt(document.getElementById('swal-units-app').value),
+                    approval_note: document.getElementById('swal-note-app').value
+                }
+            }
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                setInventory(inventory.filter(pkt => pkt.id !== id));
-                Swal.fire('Issued!', `Packet ${id} has been dispatched.`, 'success');
+                const res = await updateBloodRequestStatus(id, result.value);
+                if (res.success) {
+                    Swal.fire('Approved!', 'Request approved and units allocated.', 'success');
+                    fetchData();
+                } else {
+                    Swal.fire('Error', 'Could not approve request.', 'error');
+                }
             }
         });
     };
 
-    return (
-        <div className="dashboard staff-dashboard fade-in">
-            <div className="dashboard-header flex-between">
-                <div>
-                    <h1 className="welcome-text">Hospital Blood Bank</h1>
-                    <p className="text-muted">Inventory Management & Issuance</p>
-                </div>
-                <button className="btn btn-primary" onClick={handleAddPacket}>
-                    <PackagePlus size={18} style={{ marginRight: '8px' }} />
-                    Log New Packet
-                </button>
-            </div>
+    const handleRejectRequest = (id) => {
+        Swal.fire({
+            title: 'Reject Request',
+            input: 'text',
+            inputLabel: 'Reason for Rejection',
+            inputPlaceholder: 'e.g. Insufficient stock',
+            showCancelButton: true,
+            confirmButtonColor: '#d32f2f',
+            confirmButtonText: 'Reject Request',
+            preConfirm: (note) => {
+                if (!note) Swal.showValidationMessage('A reason is required to reject a request.');
+                return { status: 'REJECTED', rejection_note: note };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const res = await updateBloodRequestStatus(id, result.value);
+                if (res.success) {
+                    Swal.fire('Rejected', 'The request has been rejected.', 'info');
+                    fetchData();
+                } else {
+                    Swal.fire('Error', 'Could not reject request.', 'error');
+                }
+            }
+        });
+    };
 
-            <div className="dashboard-grid">
-                {/* FIFO Recommendations */}
-                <div className="col-span-12">
-                    <div className="card fifo-alert-card">
-                        <div className="card-header alert-header">
-                            <h2><Clock size={20} /> FIFO Priority Issuance (Short Expiry)</h2>
-                        </div>
-                        <div className="card-body">
-                            <div className="flex-row gap-4">
-                                {inventory.filter(p => p.daysLeft <= 7).sort((a, b) => a.daysLeft - b.daysLeft).map(packet => (
-                                    <div key={`fifo-${packet.id}`} className="fifo-item p-3 border-radius-md bg-white shadow-sm">
-                                        <div className="flex-between mb-2">
-                                            <strong>{packet.id}</strong>
-                                            <span className={`badge ${packet.status === 'Critical' ? 'critical' : 'warning'}`}>{packet.type}</span>
-                                        </div>
-                                        <p className="text-sm text-muted">Expires in {packet.daysLeft} days</p>
-                                        <button className="btn btn-outline btn-sm w-full mt-2" onClick={() => handleIssuePacket(packet.id)}>Issue Now</button>
-                                    </div>
-                                ))}
-                            </div>
-                            {inventory.filter(p => p.daysLeft <= 7).length === 0 && (
-                                <p className="text-muted"><CheckCircle size={16} /> All packets have good validity. No urgent FIFO issues.</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Inventory */}
-                <div className="col-span-12">
-                    <div className="card">
+    const renderContent = () => {
+        switch(activeTab) {
+            case 'requests':
+                return (
+                    <div className="card fade-in">
                         <div className="card-header">
-                            <h2><ListChecks size={20} /> Current Stock Inventory</h2>
+                            <h2><Stethoscope size={20} /> Doctor Blood Requests</h2>
                         </div>
-                        <div className="card-body p-0">
+                        <div className="card-body p-0 data-table-wrapper">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Packet ID</th>
-                                        <th>Blood Type</th>
-                                        <th>Collected Date</th>
-                                        <th>Shelf Life</th>
-                                        <th>Status Badge</th>
-                                        <th>Action</th>
+                                        <th>Date</th>
+                                        <th>Doctor / Hospital</th>
+                                        <th>Blood Group</th>
+                                        <th>Units</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {inventory.map(packet => (
-                                        <tr key={packet.id}>
-                                            <td><strong>{packet.id}</strong></td>
-                                            <td><h3>{packet.type}</h3></td>
-                                            <td>{packet.collectedDate}</td>
+                                    {requests.length === 0 ? (
+                                        <tr><td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No requests found.</td></tr>
+                                    ) : requests.map(req => (
+                                        <tr key={req.id}>
+                                            <td>{new Date(req.created_at).toLocaleDateString()}</td>
                                             <td>
-                                                <div className="progress-bar" style={{ width: '100px' }}>
-                                                    <div className={`progress-fill ${packet.daysLeft > 15 ? 'safe' : packet.daysLeft > 3 ? 'warning' : 'critical'}`} style={{ width: `${(packet.daysLeft / 35) * 100}%` }}></div>
-                                                </div>
-                                                <span className="text-xs text-muted block mt-1">{packet.daysLeft} days left</span>
+                                                <strong>{req.doctor_name || `Dr. #${req.doctor}`}</strong><br/>
+                                                <span style={{fontSize: '12px', color: '#666'}}>{req.hospital || '-'}</span>
                                             </td>
+                                            <td><strong style={{fontSize: '16px'}}>{req.blood_group}</strong></td>
+                                            <td>{req.units_requested}</td>
+                                            <td><span className={`badge ${req.priority_level}`}>{req.priority_level}</span></td>
+                                            <td><span className={`badge ${req.status}`}>{req.status}</span></td>
                                             <td>
-                                                <span className={`badge ${packet.status === 'Safe' ? 'safe' : packet.status === 'Expiring Soon' ? 'warning' : 'critical'}`}>
-                                                    {packet.status === 'Critical' && <AlertTriangle size={12} style={{ marginRight: '4px' }} />}
-                                                    {packet.status}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button className="btn btn-outline text-xs" onClick={() => handleIssuePacket(packet.id)}>Issue</button>
+                                                {req.status === 'PENDING' ? (
+                                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                                        <button className="btn btn-sm btn-success" onClick={() => handleApproveRequest(req.id, req.units_requested)}>Approve</button>
+                                                        <button className="btn btn-sm btn-danger" onClick={() => handleRejectRequest(req.id)}>Reject</button>
+                                                    </div>
+                                                ) : (
+                                                    <span style={{fontSize: '12px', color: '#888'}}>
+                                                        {req.status === 'REJECTED' ? `Note: ${req.rejection_note}` : `Allocated: ${req.units_approved}`}
+                                                    </span>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -153,9 +197,118 @@ const StaffDashboard = () => {
                             </table>
                         </div>
                     </div>
+                );
+            case 'inventory':
+                return (
+                    <div className="card fade-in">
+                        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2><ListChecks size={20} /> Live Blood Inventory</h2>
+                            <button className="btn btn-primary" onClick={handleAddPacket}>
+                                <PackagePlus size={18} /> Add Stock
+                            </button>
+                        </div>
+                        <div className="card-body">
+                            {Object.keys(inventory).length === 0 ? (
+                                <p style={{ textAlign: 'center', color: '#666' }}>No inventory data available.</p>
+                            ) : (
+                                <div className="blood-type-grid">
+                                    {Object.entries(inventory).map(([group, data]) => (
+                                        <div key={group} className={`stock-card status-${data.status}`}>
+                                            <h3>{group}</h3>
+                                            <div className="units">{data.units} Units</div>
+                                            <div className="status">{data.status}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            case 'pending-changes':
+                return (
+                    <div className="card fade-in">
+                        <div className="card-header">
+                            <h2><Clock size={20} /> Pending Stock Changes (Awaiting Admin Approval)</h2>
+                        </div>
+                        <div className="card-body p-0 data-table-wrapper">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                        <th>Blood Type</th>
+                                        <th>Quantity Delta</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {changes.length === 0 ? (
+                                        <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>No pending changes.</td></tr>
+                                    ) : changes.map(change => (
+                                        <tr key={change.id}>
+                                            <td>{new Date(change.created_at).toLocaleDateString()}</td>
+                                            <td>{change.action}</td>
+                                            <td>{change.blood_type || '-'}</td>
+                                            <td>{change.quantity_delta > 0 ? `+${change.quantity_delta}` : change.quantity_delta}</td>
+                                            <td><span className="badge warning">{change.status.replace(/_/g, ' ')}</span></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="staff-dashboard">
+            {/* SIDEBAR */}
+            <div className="staff-sidebar">
+                <div className="sidebar-header" style={{ padding: '0 20px 20px', borderBottom: '1px solid #eee', marginBottom: '10px' }}>
+                    <h2 style={{ fontSize: '20px', color: '#1976d2', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Activity size={24} /> HopeDrop
+                    </h2>
+                    <span style={{ fontSize: '12px', color: '#666', textTransform: 'uppercase' }}>Blood Bank Admin</span>
                 </div>
+
+                <nav style={{ display: 'flex', flexDirection: 'column', gap: '5px', padding: '0 10px' }}>
+                    {[
+                        { id: 'requests', icon: <Stethoscope size={20} />, label: 'Doctor Requests' },
+                        { id: 'inventory', icon: <ListChecks size={20} />, label: 'Live Inventory' },
+                        { id: 'pending-changes', icon: <Clock size={20} />, label: 'Stock Approvals' },
+                    ].map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
+                                border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500',
+                                backgroundColor: activeTab === item.id ? '#e3f2fd' : 'transparent',
+                                color: activeTab === item.id ? '#1976d2' : '#555',
+                                textAlign: 'left', transition: 'all 0.2s'
+                            }}
+                        >
+                            {item.icon} <span>{item.label}</span>
+                        </button>
+                    ))}
+                </nav>
             </div>
-        </div >
+
+            {/* MAIN CONTENT AREA */}
+            <div className="main-content">
+                <div className="header-actions">
+                    <div>
+                        <h1 style={{ margin: '0 0 5px 0', fontSize: '28px', color: '#333' }}>Blood Bank Dashboard</h1>
+                        <p style={{ margin: 0, color: '#666', fontSize: '15px' }}>Manage stock and fulfill hospital requests.</p>
+                    </div>
+                </div>
+
+                {loading ? <p>Loading data...</p> : renderContent()}
+            </div>
+        </div>
     );
 };
 

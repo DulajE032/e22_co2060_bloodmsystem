@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models.donorDetails import DonorDetails
-from .models.donorAlert import DonorAlert
-from .models.donationHistory import DonationHistory
 from .models.bloodCamp import BloodCamp
 from .models.campRegistration import CampRegistration
+from .models.donationHistory import DonationHistory
+from .models.donorAlert import DonorAlert
+from .models.donorDetails import DonorDetails
 
 
 @admin.register(DonorDetails)

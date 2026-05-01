@@ -1,19 +1,17 @@
 from django.urls import path
 
-from ..services.donorService import DonorProfileView
-from ..services.donorDashboardService import DonorDashboardView
-from ..services.donorAlertService import DonorAlertListView, DonorAlertMarkReadView
-from ..services.donationHistoryService import DonorDonationHistoryView
-from ..services.public.donorQrService import PublicDonorByQrView
 from ..services.bloodCampService import (
     UpcomingBloodCampsView,
     LatestPublicBloodCampView,
     OrganizerBloodCampView,
     RegisterForCampView,
-    CampRegistrationsView,
-    ApproveCampRegistrationView,
-    CompleteCampRegistrationView
+    UpcomingBloodCampsView,
 )
+from ..services.donationHistoryService import DonorDonationHistoryView
+from ..services.donorAlertService import DonorAlertListView, DonorAlertMarkReadView
+from ..services.donorDashboardService import DonorDashboardView
+from ..services.donorService import DonorProfileView
+from ..services.public.donorQrService import PublicDonorByQrView
 
 urlpatterns = [
     path('profile/', DonorProfileView.as_view(), name='donor-profile-dashboard'),
@@ -22,7 +20,7 @@ urlpatterns = [
     path('alerts/', DonorAlertListView.as_view(), name='donor-alerts-list'),
     path('alerts/<int:pk>/read/', DonorAlertMarkReadView.as_view(), name='donor-alert-mark-read'),
     path("public/<uuid:qr_id>/", PublicDonorByQrView.as_view(), name="public-donor-by-qr"),
-    
+
     # Blood Camp Routes
     path('camps/upcoming/', UpcomingBloodCampsView.as_view(), name='upcoming-camps'),
     path('camps/public/latest/', LatestPublicBloodCampView.as_view(), name='public-latest-camp'),
