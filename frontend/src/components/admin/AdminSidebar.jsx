@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import{ NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth/useAuth';
 import {
   Activity,
@@ -12,6 +12,7 @@ import {
   X,
   LogOut,
   Settings,
+  Calendar,
 } from 'lucide-react';
 import './AdminSidebar.css';
 
@@ -25,7 +26,7 @@ const AdminSidebar = () => {
     if (window.innerWidth <= 768) {
       setIsOpen(false);
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,6 +43,8 @@ const AdminSidebar = () => {
 
   const sidebarLinks = [
     { path: '/admin', icon: Activity, label: 'Dashboard' },
+    { path: '/admin?tab=donors', icon: Users, label: 'Manage Donors' },
+    { path: '/admin?tab=camps', icon: Calendar, label: 'Camp Organizers' },
     { path: '/admin/doctors', icon: Users, label: 'Doctors' },
     { path: '/admin/inventory', icon: Droplet, label: 'Inventory' },
     { path: '/admin/requests', icon: FileText, label: 'Blood Requests' },
@@ -93,9 +96,11 @@ const AdminSidebar = () => {
             <NavLink
               key={path}
               to={path}
-              className={({ isActive }) =>
-                `nav-item ${isActive ? 'active' : ''}`
-              }
+              className={() => {
+                const currentPath = location.pathname + location.search;
+                const isActive = currentPath === path || (path === '/admin' && location.pathname === '/admin' && !location.search);
+                return `nav-item ${isActive ? 'active' : ''}`;
+              }}
               onClick={closeSidebar}
             >
               <Icon size={20} />
@@ -125,22 +130,16 @@ const AdminSidebar = () => {
         </div>
       </aside>
 
-      {/* Top Header */}
-      <header className="top-header">
+      {/* Mobile Menu Toggle (Floating) */}
+      {!isOpen && (
         <button
           onClick={toggleSidebar}
-          className="menu-toggle"
+          className="menu-toggle floating-toggle"
           aria-label="Toggle menu"
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          <Menu size={24} />
         </button>
-        <div className="user-profile">
-          <span>Welcome, {user?.username || 'Admin'}</span>
-          <div className="avatar">
-            {user?.username?.[0]?.toUpperCase() || 'A'}
-          </div>
-        </div>
-      </header>
+      )}
     </>
   );
 };

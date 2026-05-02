@@ -5,7 +5,9 @@ from ..services.bloodCampService import (
     LatestPublicBloodCampView,
     OrganizerBloodCampView,
     RegisterForCampView,
-    UpcomingBloodCampsView,
+    CampRegistrationsView,
+    ApproveCampRegistrationView,
+    CompleteCampRegistrationView,
 )
 from ..services.donationHistoryService import DonorDonationHistoryView
 from ..services.donorAlertService import DonorAlertListView, DonorAlertMarkReadView
