@@ -33,6 +33,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -42,6 +43,7 @@
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -233,7 +235,7 @@
 /* ════════════════════════════════════════════════════════════
    MAIN CONTENT AREA
    ════════════════════════════════════════════════════════════ */
-.main-content {
+.admin-main-content {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -241,66 +243,26 @@
   transition: margin-left 0.3s ease;
 }
 
-/* Top Header */
-.top-header {
-  height: 70px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  padding: 0 32px;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.menu-toggle {
-  border: none;
-  background: none;
-  cursor: pointer;
+/* Floating Menu Toggle for Mobile */
+.menu-toggle.floating-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 900;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  border-radius: 8px;
   padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  transition: all 0.2s ease;
-  border-radius: 6px;
   display: none;
-}
-
-.menu-toggle:hover {
-  background-color: #f3f4f6;
-  color: #1f2937;
-}
-
-/* User Profile in Header */
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.user-profile > span {
-  font-size: 14px;
-  font-weight: 500;
+  cursor: pointer;
   color: #4b5563;
+  transition: all 0.2s ease;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #fca5a5, #fecaca);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: #dc2626;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.menu-toggle.floating-toggle:hover {
+  background-color: #f9fafb;
+  color: #1f2937;
 }
 
 /* Page Content */
@@ -314,9 +276,6 @@
    RESPONSIVE DESIGN - Tablet & Below
    ════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .top-header {
-    padding: 0 20px;
-  }
 
   .page-content {
     padding: 24px;
@@ -324,6 +283,7 @@
 }
 
 @media (max-width: 768px) {
+
   /* Sidebar - Mobile Drawer */
   .sidebar {
     position: fixed;
@@ -343,7 +303,7 @@
   }
 
   /* Main content adjustment */
-  .main-content {
+  .admin-main-content {
     margin-left: 0;
   }
 
@@ -352,14 +312,6 @@
     display: flex;
   }
 
-  .top-header {
-    padding: 0 16px;
-    height: 60px;
-  }
-
-  .user-profile > span {
-    display: none;
-  }
 
   .page-content {
     padding: 16px;
@@ -380,11 +332,6 @@
     max-width: 280px;
   }
 
-  .top-header {
-    height: 56px;
-    padding: 0 12px;
-    gap: 8px;
-  }
 
   .page-content {
     padding: 12px;
@@ -446,4 +393,3 @@
 .page-content::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
-
